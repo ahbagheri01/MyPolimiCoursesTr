@@ -1,0 +1,29 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+transcription_status.csv
+
+# Source recordings stay local; only transcript text is published.
+*.aac
+*.flac
+*.m4a
+*.mka
+*.mkv
+*.mov
+*.mp3
+*.mp4
+*.mpeg
+*.mpg
+*.ogg
+*.opus
+*.wav
+*.webm
+*.wma
+*.wmv
+
+# Model weights and local caches
+.cache/
+*.nemo
+*.safetensors
+
