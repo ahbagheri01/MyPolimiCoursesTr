@@ -21,15 +21,39 @@ class LLMClient:
             raise RuntimeError("Set llm.model in YAML or LECTURE_AGENT_MODEL in the environment")
         self.model = str(model)
         self.temperature = float(settings.get("temperature", 0.1))
+        self.max_tokens = int(settings.get("max_tokens", 8_000))
+        if self.max_tokens < 1:
+            raise RuntimeError("llm.max_tokens must be a positive integer")
+        self.reasoning = settings.get("reasoning")
+        self.provider = settings.get("provider")
+        if self.reasoning is not None and not isinstance(self.reasoning, dict):
+            raise RuntimeError("llm.reasoning must be a YAML mapping")
+        if self.provider is not None and not isinstance(self.provider, dict):
+            raise RuntimeError("llm.provider must be a YAML mapping")
         self.client = OpenAI(api_key=api_key, base_url=settings.get("base_url", "https://openrouter.ai/api/v1"))
 
     def json(self, system: str, prompt: str) -> dict[str, Any]:
-        response = self.client.chat.completions.create(
-            model=self.model,
-            temperature=self.temperature,
-            response_format={"type": "json_object"},
-            messages=[{"role": "system", "content": system}, {"role": "user", "content": prompt}],
-        )
+        try:
+            provider_options: dict[str, Any] = {}
+            if self.reasoning is not None:
+                provider_options["reasoning"] = self.reasoning
+            if self.provider is not None:
+                provider_options["provider"] = self.provider
+            request: dict[str, Any] = {
+                "model": self.model,
+                "temperature": self.temperature,
+                "max_tokens": self.max_tokens,
+                "response_format": {"type": "json_object"},
+                "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
+            }
+            if provider_options:
+                request["extra_body"] = provider_options
+            response = self.client.chat.completions.create(**request)
+        except Exception as exc:
+            status = getattr(exc, "status_code", None)
+            detail = getattr(exc, "message", None) or str(exc)
+            prefix = f"LLM API request failed (HTTP {status})" if status else "LLM API request failed"
+            raise RuntimeError(f"{prefix}: {detail}") from exc
         content = response.choices[0].message.content
         if not content:
             raise RuntimeError("The model returned an empty response")

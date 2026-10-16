@@ -123,3 +123,12 @@ default. Extracted material and internal evidence audits are cached in
 
 Every lecture entry must contain `status: INCOMPLETE` or `status: COMPLETE`. Completed
 lectures are skipped, including when selected explicitly with `--lecture`.
+
+`llm.max_tokens` limits each model response (the default is 8000). Keeping this explicit
+also prevents OpenRouter from reserving credits for a model's much larger theoretical
+maximum output.
+
+Provider-specific `reasoning` and `provider` mappings can optionally be configured in
+YAML. When omitted, the client sends only standard OpenAI-compatible request fields.
+The Data Mining configuration uses Together's OpenAI-compatible endpoint and reads its
+key from `TOGETHER_API_KEY`.
