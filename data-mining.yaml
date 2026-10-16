@@ -21,7 +21,7 @@ workflow:
 
 lectures:
   - id: DM2026-01-CourseIntroduction-DataMining
-    status: COMPLETE
+    status: INCOMPLETE
     course: Data Mining
     transcripts:
       - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-01-CourseIntroduction-DataMining.txt
@@ -30,7 +30,7 @@ lectures:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-01-DataMining.pdf'
 
   - id: DM2026-02-DataRepresentation
-    status: COMPLETE
+    status: INCOMPLETE
     course: Data Mining
     transcripts:
       - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-02-DataRepresentation.txt
@@ -38,7 +38,7 @@ lectures:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-02-DataRepresentation.pdf'
 
   - id: DM2026-03-AssociationRules
-    status: COMPLETE
+    status: INCOMPLETE
     course: Data Mining
     transcripts:
       - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-03-AssociationRules.txt
@@ -46,7 +46,7 @@ lectures:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-04-AssociationRules.pdf'
 
   - id: DM2026-04-AssociationRules
-    status: COMPLETE
+    status: INCOMPLETE
     course: Data Mining
     transcripts:
       - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-04-AssociationRules.txt
@@ -54,7 +54,7 @@ lectures:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-04-AssociationRules.pdf'
 
   - id: DM2026-05-Clustering
-    status: COMPLETE
+    status: INCOMPLETE
     course: Data Mining
     transcripts:
       - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-05-Clustering.txt
@@ -62,7 +62,7 @@ lectures:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-05-Clustering.pdf'
 
   - id: DM2026-06-HierarchicalClusteringAndNotebooks
-    status: COMPLETE
+    status: INCOMPLETE
     course: Data Mining
     transcripts:
       - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-06-HierarchicalClusteringAndNotebooks.txt
@@ -70,7 +70,7 @@ lectures:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-06-HierarchicalClustering.pdf'
 
   - id: DM2026-07-RepresentationBasedClustering
-    status: COMPLETE
+    status: INCOMPLETE
     course: Data Mining
     transcripts:
       - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-07-RepresentationBasedClustering.txt
@@ -78,7 +78,7 @@ lectures:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-07-RepresentativeBasedClustering.pdf'
 
   - id: DM2026-08-DBScanNotebooksAndLinearRegression
-    status: COMPLETE
+    status: INCOMPLETE
     course: Data Mining
     transcripts:
       - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-08-DBScanNotebooksAndLinearRegression.txt

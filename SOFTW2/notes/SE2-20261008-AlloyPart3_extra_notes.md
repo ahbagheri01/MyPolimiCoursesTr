@@ -3,60 +3,56 @@
 **Transcripts:** Software Engineering 2 20261008.txt
 **Materials:** E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\03a.AlloyPart1-2.pdf
 
-## Alloy ternary relations and field semantics
+## Default Run Command in the Absence of Predicates
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 12, 32
+**Reference:** Slide 35
 
-Declaring a signature field whose range is defined by a Cartesian product (for example, within signature S, a field declared as A -> B) creates an ordered ternary relation typed as S -> A -> B, where the host signature forms the relation's domain.
+When an Alloy model contains no explicit `run` command or predicates, the Alloy Analyzer automatically synthesizes and executes a default predicate and default run command upon execution.
 
-## Alloy default run behavior and need for constraints
+## Role of Names in Facts versus Predicates, Functions, and Assertions
 
-Executing an Alloy specification lacking an explicit run command or target predicate causes the Alloy Analyzer to automatically instantiate a default predicate and run command. This explores unconstrained relational bindings between signature elements, often producing nonsensical domain instances if semantic rules are omitted.
+**Reference:** Slide 45
 
-## Signature multiplicity / cardinality prefixes
+Fact names in Alloy are entirely optional and ignored by the analyzer, serving solely human readability purposes. In contrast, identifiers assigned to predicates, functions, and assertions are functionally necessary because they must be invoked or checked by name.
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 12, 31
+## Empirical Comparison of Constraint Strength via Assertions
 
-When a signature declaration omits a cardinality prefix, Alloy defaults to the multiplicity prefix `set` (signifying zero, one, or multiple instances), in contrast to explicit prefixes like `one` or `some`.
+**Reference:** Slides 50-51
 
-## Relational join and function call syntax equivalence
+To formally compare whether one constraint is stronger than another without extensive manual relational algebra proofs, each constraint can be converted into a parameterless predicate, followed by checking bidirectional assertions (`predA implies predB` and `predB implies predA`). If both yield counterexamples, neither constraint is strictly stronger than the other.
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 34
+## Set-Theoretic versus First-Order Logic Styles in Alloy Constraints
 
-Function calls and relational dot joins in Alloy are interchangeable syntactical forms (e.g., `P.grandpas` is strictly equivalent to `grandpas[P]`). Parameterized calls must strictly use square brackets instead of standard parentheses.
+**Reference:** Slides 40, 41, 47
 
-## Naming facts, predicates, and assertions
+Alloy models allow constraints to be formulated either via higher-level relational/set operators (such as relational transpose `~` and intersection `&`) or via first-order quantified logic statements. Set-based specifications tend to be significantly more compact, whereas logical implications are often more verbose yet conceptually easier for designers to formulate.
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 45
+## Visualization Interface for Mutable (Temporal) Steps in Alloy 6
 
-Fact identifiers are purely informative metadata meant for human readability and are completely ignored by the Alloy Analyzer engine. In contrast, predicates, functions, and assertions require names as programmatic identifiers so they can be referenced and invoked by `run` or `check` directives.
+**Reference:** Slide 58
 
-## Relational vs. first-order logic modeling styles in Alloy
+In Alloy 6, the visualizer displays dynamic timelines side-by-side displaying exactly two time steps at once (the current step and the subsequent step). Later steps beyond the visible pair appear dimmed or in gray, requiring manual stepping via navigation controls to advance the timeline visualization.
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 40-41, 45-47
+## Necessity of Frame Conditions in Temporal Cardinality Constraints
 
-Constraints in Alloy can typically be expressed in two interchangeable paradigms: a relational/set-algebraic style (using operators like union, intersection, transpose, and transitive closure) or a first-order logic style (quantifiers, implications, equality). Relational expressions yield concise and compact formulas, whereas first-order formulations are more verbose but often more approachable to specify.
+**Reference:** Slide 57
 
-## Using assertions to compare constraint strength
+Simply specifying that the cardinality of a mutable relation increments across successive time steps (`#b.addr = 0; #b.addr = 1; #b.addr = 2`) does not enforce data continuity or persistence; tuples present in one step can be replaced by completely distinct elements in the next unless explicit persistence constraints (frame conditions) are enforced.
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 49-51
+## Pervasive Application of 'always' in Temporal Facts
 
-To evaluate relative constraint strength between two prospective facts, wrap each as a parameterless predicate and run bidirectional assertions (`A implies B` and `B implies A`). If only one direction passes without counterexamples, a strict hierarchy of strength is verified; counterexamples in both directions demonstrate incomparable constraints.
+**Reference:** Slide 61
 
-## Temporal operator `always` in facts
+In temporal Alloy models containing `var` signatures or relations, invariants and constraints within `fact` blocks almost universally require being wrapped in the `always` operator; without `always`, a constraint inside a fact is evaluated only at the initial time step (step 0).
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 61, 75
+## Enumerations versus Abstract Signatures for State Spaces
 
-Dynamic models in Alloy evaluate bare facts at the initial state step (time 0) by default. Therefore, dynamic domain invariant facts almost universally require the `always` operator to ensure constraints apply across every reachable execution step.
+**Reference:** Slide 62
 
-## `enum` vs. abstract signatures in Alloy
+Alloy `enum` declarations represent syntactic sugar equivalent to an abstract signature extended by disjoint singleton sub-signatures. Enumerations are preferred for simple, atomic state sets without specific relations, but cannot replace abstract signatures when distinct sub-types require unique fields or relational attributes.
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 62
+## Vacuous Satisfaction in Implicational Temporal Invariants
 
-Alloy's `enum` construct serves as syntactic sugar for an abstract signature extended by singleton sub-signatures, but it is restricted to flat constant values and cannot be used when members require individual relations, fields, or properties.
+**Reference:** Slide 63
 
-## Temporal implication and `eventually` vs. `always`
-
-**Reference:** 03a.AlloyPart1-2.pdf, slide 63, 64
-
-A safety persistence property specified as `always (d.status = Broken => always d.status = Broken)` vacuously permits an execution where an entity stays `Working` indefinitely; enforcing that an event or state transition must occur requires a liveness property formulated with `eventually`.
+A temporal rule stating that entering a broken state implies permanently staying broken (`always (status = Broken implies after always status = Broken)`) allows traces where a device remains functioning for its entire lifespan, because the antecedent remains false across all evaluation instants, vacuously satisfying the implication.

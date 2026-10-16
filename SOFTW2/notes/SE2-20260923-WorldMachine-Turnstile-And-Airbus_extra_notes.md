@@ -3,32 +3,26 @@
 **Transcripts:** Software Engineering 2 20260923.txt
 **Materials:** E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\02a.RE.pdf, E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\02c.ExampleScenarioUCReqs.pdf
 
-## The Purpose of the Machine and Why Intersection is Mandatory
+## Resolving Unfulfillable Goals in Ambulance Dispatching
 
-**Reference:** 02a.RE.pdf, slide 20-22
+**Reference:** 02a.RE.pdf page 24, 25
 
-In the Jackson-Zave framework, the purpose of a machine always lies in the world. Consequently, the intersection between the world and the machine (shared phenomena) must be non-empty; if there were no intersection, the machine would have no means of interacting with or producing any advantage for that part of the world.
+When analyzing the ambulance dispatching system, the professor points out that the software and existing assumptions cannot mathematically or operationally guarantee the 15-minute arrival goal (e.g., driver delays, traffic, distance). When a goal cannot be entailed by R and D (R ∧ D ⊭ G), the engineer has two main options: (1) iterate to add new requirements and domain assumptions to make the goal satisfiable (e.g., specifying fleet size, assumptions about geographic ambulance distribution across the city, or periodic automated redistribution algorithms); or (2) negotiate early with stakeholders to relax or reduce the goal's scope (e.g., removing the hard 15-minute upper bound). Crucially, the professor warns that promising an unfulfillable constraint leads to project failure even if the software implementation itself is of the highest quality.
 
-## Why Goals Cannot Be Formulated as Pure Requirements (Ambulance 14/15-min Example)
+## Airbus A320 Accident: Severe Impact of Invalid Domain Assumptions
 
-**Reference:** 02a.RE.pdf, slide 23-25
+**Reference:** 02a.RE.pdf page 27-31
 
-Goals often predicate over phenomena that are strictly world-only (e.g., physical arrival of an ambulance at the scene within 15 minutes). Software cannot directly observe or guarantee this outcome on its own without assuming environment cooperation (sufficient fleet size, geographical distribution, traffic conditions). When R and D fail to entail G, engineers must either renegotiate/relax the goal or add domain assumptions and software requirements (e.g., proactive periodic re-distribution of ambulances).
+The professor provides deep contextual commentary on the Airbus A320 accident: the formal argument was completely sound on paper (R ∧ D ⊨ G), but one domain assumption—that wheels turn if and only if the plane is moving on the runway—broke in reality due to aquaplaning. The software delayed reverse thrust deployment by 9 seconds because wheel sensors gave no pulses on the water film. The professor emphasizes a critical software engineering takeaway: discovering an invalid domain assumption during operation often necessitates a complete redesign of the system, because the core software logic was architected around a physical property that does not hold.
 
-## Critical Architectural Impact of Flawed Domain Assumptions
+## Modelling Access Control: Granularity and Mechanical vs Software Enforcement
 
-**Reference:** 02a.RE.pdf, slide 29-31
+**Reference:** 02a.RE.pdf page 35, 36, 38
 
-In the Warsaw Airbus A320 accident, the correctness argument (R and D entail G) was logically sound, but the domain assumption 'wheels turning iff moving on runway' proved false due to aquaplaning. The professor stresses that an invalid domain assumption is particularly critical because entire architectural and design decisions are built upon it; discovering its invalidity in production often forces a complete redesign of the system.
+During the interactive walkthrough of the Physical Access Control System (PACS), the professor explores alternative modeling decisions not detailed on the slides: (1) Feedback vs internal state: checking token validity is internal machine-only, but providing confirmation/feedback to the user is shared and machine-controlled; analysts can either represent both separately or merge them at a higher level of abstraction depending on the desired model scope; (2) Mechanical turnstiles vs automated doors: the door closure phenomenon can be machine-controlled (via software actuating automated doors within delay d_e) or world-only (if a passive mechanical turnstile/barrier, like older metro turnstiles, physically ratchets closed after a person pushes through, preventing tailgating by design).
 
-## Subjectivity of Phenomenon Classification and Level of Abstraction
+## Physical Access Control System: Two-Stage Structure of the Correctness Proof
 
-**Reference:** 02a.RE.pdf, slide 35-36
+**Reference:** 02a.RE.pdf page 41, 42
 
-Phenomenon classification is not unique and depends on the chosen level of abstraction and physical design. For example, validating a token and acknowledging validity can be split into an internal machine phenomenon ('validates token') and an output shared phenomenon ('confirms valid token'), or combined into a single machine-controlled shared phenomenon. Similarly, door closing can be shared machine-controlled (motorized barrier) or world-only (a mechanical turnstile resetting automatically after passage).
-
-## Two-Part Decomposition of Physical Access Invariant Proof
-
-**Reference:** 02a.RE.pdf, slide 41-42
-
-To prove that the physical access system satisfies the safety goal G1 (entries e <= scanned tokens s), the formal argument is split across the intermediate boundary variable 'openings' (o). First, prove e <= o using domain assumptions about human behaviour and sensor timing (DA1-DA4) and requirements R3-R5. Second, prove o <= s using requirements controlling door opening (R1, R2, R3) and initial state. Combining both yields e <= o <= s, demonstrating G1 holds.
+The professor explains the mathematical and structural intuition behind proving goal G1 (e ≤ s, entries never exceed scanned tokens) using requirements R1–R5 and domain assumptions DA1–DA4: the proof cannot link entries e and scans s directly because the machine cannot observe entries nor force scans. Instead, it must be decomposed into two distinct halves mediated by the number of door openings o: first proving e ≤ o (which relies primarily on physical domain assumptions DA1–DA4 regarding human behavior and door closure speed d_e), and second proving o ≤ s (which relies primarily on software requirements R1–R3 enforcing that door openings never exceed valid token scans and initial conditions R5/s=0). Combining e ≤ o and o ≤ s establishes e ≤ s.

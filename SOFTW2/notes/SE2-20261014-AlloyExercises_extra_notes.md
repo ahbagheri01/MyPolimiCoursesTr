@@ -3,92 +3,92 @@
 **Transcripts:** Software Engineering 2 20261014.txt
 **Materials:** E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\03a.AlloyPart1-2.pdf, E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\03b.AlloyExercises.pdf
 
-## Alloy temporal operators: after and always redundancy
+## Redundancy of Inner 'Always' in Status Propagation Fact
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 63
+**Reference:** 03a.AlloyPart1-2.pdf#page=64
 
-In an implication enforcing that a broken status remains broken, an inner 'always' can be omitted without changing the meaning because an outer 'always' ensures the step-by-step condition holds at all future time instants.
+In the temporal fact `all d: Device | always (d.status = Broken implies after always d.status = Broken)`, the inner 'always' can be omitted without changing the meaning of the fact. Since the outer 'always' evaluates at every time instant, requiring `after d.status = Broken` at each step where status is broken inductively enforces that the device remains broken in all future steps.
 
-## Alloy temporal operators: historically on finite domains
+## Handling the Undefined 'Before' Operator in the Initial State via 'After Always'
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 65
+**Reference:** 03a.AlloyPart1-2.pdf#page=67
 
-The 'historically' operator predicates strictly over the finite history of the instantiation from the current step back to the initial state, as Alloy models are evaluated over finite time traces.
+Because Alloy traces operate over finite domains with a discrete starting instant, the `before` operator is false or undefined at the very first step (instant 0). To express past preservation properties like `d.status = Working implies before d.status = Working` without making the fact false at the initial instant, one uses the prefix `after always`. This shifts evaluation to begin strictly from the second instant onward.
 
-## Alloy temporal operators: 'before' at the initial time instant and 'after always' idiom
+## Equivalence and Syntax of Transition Specifications: Prime Notation vs After Operator
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 67
+**Reference:** 03a.AlloyPart1-2.pdf#page=69
 
-Prepending 'after always' acts as a specific trick/idiom to skip predicate evaluation at step 0, avoiding failure/falsehood where the 'before' operator has no preceding state.
+In state-transition predicates, the postcondition relation state can be specified either using prime notation (e.g., `d.status' = Broken` or `Trashed' = Trashed + m`) or by wrapping the expression with the temporal operator `after` (e.g., `after d.status = Broken` or `after #Trashed = 0`). Additionally, invoking predicates with square brackets (e.g., `break[d]`) is syntactic sugar for dot invocation (`d.break`).
 
-## Alloy temporal operators: prime notation vs. 'after'
+## Semantics of 'Once' vs 'Some' in Alloy Temporal Logic
 
-**Reference:** 03a.AlloyPart1-2.pdf, slides 59, 68
+**Reference:** 03a.AlloyPart1-2.pdf#page=70
 
-Primed relation notation (e.g., d.status') and the temporal operator 'after' (e.g., after d.status = Broken) can be used equivalently to express postconditions in transition predicates.
+Alloy temporal logic does not feature a temporal quantifier keyword named `some` for time instants; `some` is strictly used for relational or existential quantification over atoms. Instead, the past temporal operator corresponding to 'at some point in the past' (one or more previous instants) is `once`, which is the dual of `eventually`.
 
-## Alloy state transitions: the frame problem (explicit unchanged constraints)
+## Subset Declarations: 'in' vs 'extends' and Mutability
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 73
+**Reference:** 03a.AlloyPart1-2.pdf#page=73
 
-In Alloy operations, any state element not explicitly constrained is free to change arbitrarily; modelers must explicitly specify frame conditions stating what remains unchanged (e.g., message' = message).
+Declaring a signature with `sig Sub in Super` establishes `Sub` as an arbitrary subset of `Super` rather than a partition, allowing multiple sub-signatures to overlap. In contrast, using `extends` forces distinct extending signatures to be mutually disjoint. In dynamic models, marking both signatures as `var` (`var sig Message`, `var sig Trashed in Message`) allows atoms to dynamically enter or leave subsets and relations across steps.
 
-## Alloy temporal logic: scope of 'after' vs. prime notation
+## Necessity of Frame Conditions in Alloy State Transitions
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 74
+**Reference:** 03a.AlloyPart1-2.pdf#page=74
 
-The 'after' operator applies only to the expression directly following it unless parentheses are used. Combining 'after' with primed variables shifts evaluation forward twice (into the step after next).
+In declarative modeling with Alloy, every relation or signature not explicitly constrained in a transition predicate can change arbitrarily. Therefore, transition operations (such as `delete` and `restore`) must explicitly state frame conditions (e.g., `Message' = Message`) to forbid unconstrained side effects.
 
-## Alloy temporal operators: semantics of 'once'
+## Scope of Temporal Operators and Operator Precedence in Predicates
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 69
+**Reference:** 03a.AlloyPart1-2.pdf#page=75
 
-The temporal operator 'once' does not mean 'exactly once' in natural language; it means 'at some time instant in the past' (existential past quantification, true for one or more past instants).
+In predicate formulas containing multiple clauses, temporal operators like `after` apply only to the immediately following relational constraint unless grouped using explicit parentheses. For example, in `after #Trashed = 0 and Message' = Message - Trashed`, `after` binds strictly to `#Trashed = 0`, while `Message'` and `Trashed` in the subsequent clause evaluate relative to the current time instant.
 
-## Alloy signatures: constraints defined inside signature blocks
+## Initial State Constraints Outside the 'Always' Loop
 
-**Reference:** 03b.AlloyExercises.pdf, slide 5, 14
+**Reference:** 03a.AlloyPart1-2.pdf#page=76
 
-Constraints placed inside curly braces within a signature declaration implicitly apply to all instances without explicit universal quantification, and for variable models, they are implicitly enforced at all times without requiring the 'always' operator.
+In system behavior facts (e.g., `fact systemBehavior { no Trashed; always (...) }`), initial state specifications like `no Trashed` must be kept strictly outside the `always` block. Placing them inside `always` would unintentionally force the mailbox trash to remain empty across all states throughout the entire trace, making delete operations unsatisfiable.
 
-## Alloy syntax: navigation via relational join on ternary relations
+## In-Signature Block Constraints: Implicit Quantification and Temporal Invariance
 
-**Reference:** 03b.AlloyExercises.pdf, slide 15
+**Reference:** 03b.AlloyExercises.pdf#page=14
 
-To project fields out of a ternary relation (e.g., connection: Intersection -> Semaphore -> Road), joins can be chained: 'i.connection' leaves (Semaphore, Road) pairs, and joining with 'Road' yields the semaphores.
+Appending an expression block directly to a signature declaration (e.g., `sig Intersection { connection: Semaphore -> Road }{ #connection = 2 }`) eliminates the need for explicit universal quantification over that signature. Furthermore, if any relations in the signature are mutable (`var`), the in-signature constraint holds as an invariant across all time steps without requiring an explicit `always` operator.
 
-## Alloy quantification: disjointness of multiple quantified variables
+## Function and Let Semantics in Traffic Lights Intersection Model
 
-**Reference:** 03b.AlloyExercises.pdf, slides 8, 17
+**Reference:** 03b.AlloyExercises.pdf#page=15
 
-In Alloy universal quantifications like 'all s1, s2: S', variables can bind to the same atom; explicit inequality (s1 != s2) or the 'disj' keyword ('all disj s1, s2: S') must be used to enforce distinctness.
+Functions in Alloy act like object-oriented getter methods by navigating relations using relational joins (e.g., `(i.connection).Road` or `Semaphore.(i.connection)` on ternary relations). The `let` construct provides temporary variable names for intermediate evaluation results (e.g., `let s = getSemaphores[i] | #s = 2`), improving readability, although simple cardinality checks could equivalently be applied directly to function call results.
 
-## Alloy specification methodology: abstraction level and model bloat
+## Need for Explicit Disjointness in Multi-Variable Quantification
 
-**Reference:** 03b.AlloyExercises.pdf, slide 17
+**Reference:** 03b.AlloyExercises.pdf#page=17
 
-Deciding which real-world phenomena to include or exclude is critical; modeling unnecessary real-world details (like traffic jams or network-wide routing) creates heavyweight models that take too long to verify without providing benefits.
+When quantifying over multiple variables from the same signature set (e.g., `all s1: Semaphore, s2: Semaphore | s1 in s and s2 in s ...`), Alloy permits both variables to bind to the exact same atom. To enforce constraints across distinct pairs, one must explicitly add `s1 != s2` or use the `disj` keyword (`all disj s1, s2: Semaphore | ...`).
 
-## Requirements engineering: world vs. machine phenomena classification
+## Discrepancy Between Name and Semantics in 'greenIsExclusive' Fact
 
-**Reference:** 03b.AlloyExercises.pdf, slide 52
+**Reference:** 03b.AlloyExercises.pdf#page=17
 
-Distinguishing world-controlled from machine-controlled phenomena requires decomposing actions: a tourist presenting an electronic key is world-controlled, whereas checking the key and triggering unlocking is machine-controlled.
+The fact named `greenIsExclusive` states `s1 != s2 implies s1.color != s2.color`. While the name suggests preventing two green lights simultaneously, the formula actually enforces that the two semaphores must always have different colors (one red, one green), thereby also ruling out the safe state where both lights are red.
 
-## Domain modeling vs. Alloy: deriving models from UML class diagrams
+## Modelling Scope vs Performance: Abstraction Trade-offs in Road Traffic Model
 
-**Reference:** 03b.AlloyExercises.pdf, slides 20-22, 54-56
+**Reference:** 03b.AlloyExercises.pdf#page=17
 
-A UML class diagram serves as a direct intermediate step for an Alloy model, where entity classes map to signatures and associations with cardinality constraints map to Alloy relations.
+In the traffic light example, stopped traffic is modelled as `r.traffic = STOPPED implies #((Intersection.connection).r) > 0`, explicitly associating stopped traffic strictly with the presence of a semaphore and ignoring real-world factors like jams or accidents. Deciding what to abstract away is a crucial engineering trade-off: omitting extraneous real-world phenomena prevents creating an overly heavyweight specification that becomes intractable for the solver to verify.
 
-## Domain modeling: rationale for distinct 'carries' vs. 'owns' relations
+## Shared Phenomena Disambiguation: Electronic Key Locker Unlocking
 
-**Reference:** 03b.AlloyExercises.pdf, slides 54, 56, 57
+**Reference:** 03b.AlloyExercises.pdf#page=52
 
-The distinction between 'carries' and 'owns' relations for luggage is required to formalize the domain assumption of luggage safety (luggage is safe if and only if carried by its owner or locked in a locker with the matching key held by the owner).
+Shared phenomena descriptions in natural language can be ambiguous regarding world vs machine control. For 'some lockers are opened with an electronic key', analysis reveals it must be split into two phenomena: the tourist presenting the electronic key to the locker (world-controlled shared phenomenon) and the machine verifying the key and releasing the lock mechanism (machine-controlled shared phenomenon).
 
-## Alloy specification discrepancy: greenIsExclusive vs. slide title semantics
+## Domain Model Differentiation: 'carries' vs 'owns' in Luggage Keeper
 
-**Reference:** 03b.AlloyExercises.pdf, slide 17
+**Reference:** 03b.AlloyExercises.pdf#page=54
 
-The fact named 'greenIsExclusive' actually constrains two semaphores to strictly have different colors (one red, one green), preventing an all-red intersection state despite the name suggesting only that two greens cannot occur simultaneously.
+In the Luggage Keeper domain model, two separate relations are introduced between `User` and `Luggage`: `owns` and `carries`. While the informal problem description did not make this explicit, this distinction is essential for formalizing domain assumption D1 (luggage safety): a tourist permanently owns their luggage throughout the process, but only 'carries' it when physically holding it outside of locked locker storage.

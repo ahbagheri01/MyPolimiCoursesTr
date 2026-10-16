@@ -3,88 +3,50 @@
 **Transcripts:** Software Engineering 2 20261007.txt
 **Materials:** E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\03a.AlloyPart1-2.pdf
 
-## Alloy Signatures and OOP Analogy
+## Built-in Universal Types and Sets in the Alloy Analyzer
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 4, 12, 31
+**Reference:** Slide 13-14
 
-Signatures in Alloy define entities and are conceptually analogous to classes in object-oriented programming.
+The professor explains that when generating an instance, the Alloy Analyzer automatically builds the universal set (`univ`), which contains all atoms from user-defined signatures as well as built-in default entities: integers (specifically spanning -8 to 7 in the default bitwidth), a built-in integer set, sequences, strings (which may be empty if unconstrained), and `none` (the empty set). These types exist implicitly in all instances even if the user never defines them.
 
-## Alloy Case Sensitivity and Field Distinction
+## Mechanics of the Relational Join Operator and Dropping the Join Element
 
-Alloy is case-sensitive: an uppercase signature identifier (e.g., Addr) and a lowercase relation name (e.g., addr) are treated as distinct, unrelated entities.
+**Reference:** Slide 15-16
 
-## Modeling Ternary Relations in Address Book
+The professor contrasts the Alloy join operator (`.`) with database joins, emphasizing a key mechanical difference: the matching 'join element' between the two tuples is completely dropped from the resulting tuple. For example, joining a unary set `Book = {(B0)}` with a ternary relation `addr = {(B0, N0, A0)}` drops `B0`, producing the binary tuple `(N0, A0)`.
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 12
+## Diagnosis of Inconsistency in show3: Multiplicity Clash
 
-The relation over Book -> Name -> Addr is modeled as ternary rather than binary because mappings between names and addresses are book-dependent (the same name may map to different addresses in different books).
+**Reference:** Slide 18
 
-## Alloy Analyzer Built-in Universe Elements
+The professor steps through why running `pred show [b: Book] { #b.addr > 1; some n: Name | #n.(b.addr) > 1 }` returns 'no instance found / predicate may be inconsistent'. The signature declaration defined `addr: Name -> lone Addr` (specifying each name can have at most one address), directly contradicting the existential quantifier asking for a name with cardinality strictly greater than one (`> 1`). Replacing `lone` with `set` resolves the contradiction and allows an instance to be generated.
 
-The universal set 'univ' automatically computed by the Alloy Analyzer includes built-in types such as integers (-8 to 7 by default), strings, and 'none' (empty set), alongside declared signature atoms.
+## Pre-Alloy 6 State Modeling and the Aliasing Identity Trap in add
 
-## Relational Join Operator Mechanics
+**Reference:** Slide 19
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 15, 16
+Before the temporal logic introduced in Alloy 6, dynamic evolution had to be modeled idiomatically by passing pre-state and post-state atoms (`b` and `bpost`) as parameters. When defining `bpost.addr = b.addr + n -> a`, the analyzer produced a surprising instance where `b` and `bpost` were mapped to the exact same book atom. The professor explains the mechanism: set union with an element already present in the set is an idempotent operation (`X + X = X`), so no state change occurs, satisfying the formula with a single book atom.
 
-In Alloy relational join ('.'), the matching boundary atom shared between relations is dropped, reducing the arity of the resulting tuple (e.g., joining Book with Book->Name->Addr drops Book, producing Name->Addr).
+## Analysis of the Counterexample in delUndoesAdd
 
-## Run Commands and Default Scope
+**Reference:** Slide 21-22
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 17
+When checking whether delete undoes add (`assert delUndoesAdd`), the Alloy Analyzer finds a counterexample due to set union idempotence: if a book already contains `(n, a)`, executing `add` leaves the book unchanged (`b = bpost`), but subsequent execution of `del` removes `n`, resulting in an empty or smaller book (`bppost != b`). The professor notes two distinct ways to resolve this: either modify the assertion by adding a precondition ensuring `n` is not already in `b` (`no n.(b.addr)`), or modify the `add` operation predicate itself.
 
-Empty predicates evaluate to true by default, allowing them to act as generator entry points. Running commands without explicit scope uses default bounds (e.g., 3-4), whereas 'for X but Y Sig' sets a general upper bound with specific per-signature overrides.
+## Methodological Comparison: Bounded Verification vs. Software Testing
 
-## Cardinality Inconsistency Example
+**Reference:** Slide 24
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 18
+The professor provides a conceptual and geometric comparison between bounded model checking and testing: bounded verification performs exhaustive analysis of all possible configurations strictly within a predefined finite boundary (scope), leaving everything outside unknown; software testing samples arbitrary points across the entire input space, which can reach larger states but can never be exhaustive. Therefore, the two techniques are complementary and should be used together.
 
-Walkthrough diagnosing unsatisfiability: a predicate requiring 'some n: Name | #(n.(b.addr)) > 1' contradicts the signature field multiplicity 'lone Addr' (<= 1), which can be resolved by relaxing the field to 'set Addr'.
+## Distinction Between Predicates, Functions, and Facts
 
-## Pre-Alloy 6 State Modeling Idiom
+**Reference:** Slide 25-27, 43
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 19, 55
+The professor delineates the semantic roles of these core Alloy constructs: predicates evaluate to a Boolean truth value (true/false) and are checked only when explicitly invoked (e.g., via a `run` command or within another expression); functions return relational expressions/sets (e.g., `lookup` returning a set of addresses) rather than Booleans; facts are global properties and constraints that must hold across all atoms and relations in every valid generated world at all times without needing to be invoked.
 
-Prior to Alloy 6's temporal logic, state evolution was modeled idiomatically by defining multiple signature atom instances representing pre-state and post-state of the same entity (e.g., b and bpost).
+## Meta-Model Visualization in the Alloy Analyzer
 
-## Declarative vs. Operational Operation Specifications
+**Reference:** Slide 30
 
-**Reference:** 03a.AlloyPart1-2.pdf, slide 5, 19
-
-Operation predicates in Alloy are declarative relational specifications that describe constraints relating pre- and post-states, rather than operational procedures or step-by-step mutating algorithms.
-
-## Corner Case: Idempotent Add and Pre/Post State Aliasing
-
-**Reference:** 03a.AlloyPart1-2.pdf, slide 19, 21, 22
-
-In an add predicate defined as 'bpost.addr = b.addr + n->a', if 'n->a' is already in the address book, set union is idempotent, allowing the analyzer to satisfy the predicate by aliasing 'b' and 'bpost' to the same book atom.
-
-## Counterexample in Add-Delete Inversion Assertion
-
-**Reference:** 03a.AlloyPart1-2.pdf, slide 21, 22
-
-Walkthrough of delUndoesAdd counterexample: deleting after adding fails to restore the initial book if 'n->a' already existed (making add a no-op while del still strips the entry), resolved by adding the precondition 'no n.(b.addr)'.
-
-## Bounded Verification vs. Software Testing
-
-**Reference:** 03a.AlloyPart1-2.pdf, slide 24
-
-Bounded verification is sound and exhaustive across all possibilities within a fixed scope bound (missing errors outside bounds), whereas software testing samples arbitrary inputs across an infinite domain without exhaustive coverage, making them complementary.
-
-## Functions vs. Predicates in Alloy
-
-**Reference:** 03a.AlloyPart1-2.pdf, slide 25, 26
-
-In Alloy, functions ('fun') evaluate to expressions/values (such as relations or sets of atoms), whereas predicates ('pred') evaluate strictly to Boolean truth values.
-
-## Alloy Metamodel Visualization
-
-**Reference:** 03a.AlloyPart1-2.pdf, slide 30
-
-The metamodel view in the Alloy Analyzer displays structural signatures and relations at the schema/type level, as opposed to instance graphs of individual atoms and tuples.
-
-## Facts vs. Predicates Execution Semantics
-
-**Reference:** 03a.AlloyPart1-2.pdf, slide 26, 43
-
-Facts are global invariant constraints enforced unconditionally across every generated instance of a specification, whereas predicates only enforce constraints when invoked via a run command or referenced within another expression.
+The professor demonstrates a specific tool feature in the Alloy Analyzer: displaying the 'meta-model'. Unlike ordinary instance visualizations that depict individual atoms and tuple relations in a specific generated world, the meta-model visualizes the signatures and relations at the schema level (e.g., `Book`, `Addr`, and `Name` connected by `addr`). Every valid instance must conform to this overarching meta-model.

@@ -3,30 +3,42 @@
 **Transcripts:** Software Engineering 2 20261015.txt
 **Materials:** E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\02g.CreatingRASD.pdf, E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\03b.AlloyExercises.pdf
 
-## Strict Exclusion of Design Decisions from the RASD
+## Evolution of ISO/IEC/IEEE 29148 Standard and Course RASD Mapping
 
-**Reference:** 02g.CreatingRASD.pdf (slide 14)
+**Reference:** 02g.CreatingRASD.pdf, slides 6, 18, 19
 
-Requirements documents must strictly exclude premature technical implementation choices (e.g., choosing a web application vs. mobile/desktop) unless explicitly mandated as constraints by external stakeholders. Prematurely embedding implementation assumptions artificially restricts the design space during later architecture phases.
+The professor highlights that in the November 2018 revision of the IEEE/ISO standard (29148), an explicit verification section was added (Section 4), reflecting that verifying the fulfillment of requirements is now an integral part of the requirement specification document itself. In the course's RASD template, the formal analysis with Alloy directly maps onto this verification section. Additionally, the professor notes why Revision History is explicitly added to Section 1 of the course template: in industry, version management of artifacts is standard practice and often handled externally, but academically it must be made explicit. The separate Document Structure section (1.F) is also emphasized beyond a mere table of contents to explain section organization, noting students are expected to provide this in their master's theses as well.
 
-## Scope and Objectives for Course Project Alloy Modeling
+## Excluding Design Choices vs Stakeholder Technical Constraints
 
-**Reference:** 02g.CreatingRASD.pdf (slide 23)
+**Reference:** 02g.CreatingRASD.pdf, slide 14
 
-Students are explicitly advised against attempting a comprehensive Alloy formalization of the entire system specification. Instead, formal analysis in the RASD project should target at most one or two critical, non-trivial core properties to validate the correctness of system invariants without unnecessary model bloat.
+When explaining pertinence in the RASD, the professor clarifies a common pitfall: prematurely stating design/implementation choices (e.g., stating 'we will develop a web application'). Even if there is a 99% chance the final software is a web app, defining it in the requirements restricts freedom if design later shows a mobile or desktop app is superior. The strict exception is when the stakeholder explicitly mandates a specific technology or platform as a contractual constraint.
 
-## Shortcomings of the Static GenKey Specification and State Evolution
+## Scope and Expectations for Formal Analysis with Alloy in the RASD
 
-**Reference:** 03b.AlloyExercises.pdf (slide 60)
+**Reference:** 02g.CreatingRASD.pdf, slide 23
 
-The basic temporal GenKey formulation in slide 60 exhibits two subtle modeling caveats: (1) with an immutable `sig EKey`, the operation merely reassigns an existing key without checking if that key is already bound to another locker (`not EK in Locker.hasKey`); and (2) keeping `storesLuggage` invariant across transitions allows an empty locker to generate a key without confirming luggage was deposited.
+The professor explicitly advises students on the scope of the Alloy section in the project: students should NOT attempt to model the whole complex system, which would be excessively difficult and time-consuming. Instead, students must identify 1 or at most 2 critical objectives or elements of the system to investigate formally. The RASD must clearly document why those objectives were chosen, present the Alloy model, and provide verification evidence (predicates, assertions, and generated worlds with explanations).
 
-## Alternative Signature Hierarchies for Typed Cubes vs. Size Field
+## Recommended Project Tooling: LaTeX/Overleaf and Model-Centric UML vs Drawing Tools
 
-**Reference:** 03b.AlloyExercises.pdf (slide 45)
+The professor provides specific practical recommendations for project preparation: (1) LaTeX/Overleaf is strongly recommended for document creation due to superior typography; Overleaf can be linked to Politecnico accounts and synced directly with the private GitHub repository. (2) Pure drawing tools (specifically calling out Draw.io) should NOT be used for UML diagrams because they are mere icon palettes and lack an underlying semantic metamodel. Instead, model-centric UML tools such as Visual Paradigm or StarUML should be used because entity definitions are reused across use case diagrams, class diagrams, etc., ensuring semantic consistency. PlantUML is mentioned as an acceptable rendering alternative, though it lacks an integrated model repository.
 
-Modeling cube sizes can either be done via a dedicated `Size` signature associated with an attribute on `Cube`, or via direct subtype hierarchy where `Cube` is an abstract parent extended by `LargeCube`, `MediumCube`, and `SmallCube`. The attribute-based representation is slightly more verbose in Alloy than direct subtyping.
+## Luggage Keeper Alloy Model: Cardinality Incompleteness in Field Signatures
 
-## Semantic Tooling Distinction: Pure Drawing vs. Model-Based UML Tools
+**Reference:** 03b.AlloyExercises.pdf, slides 54, 56
 
-Pure drawing tools (e.g., Draw.io) maintain isolated visual shapes rather than true conceptual entities, forcing error-prone duplicate rework across views. In contrast, model-based UML modeling tools (Visual Paradigm, StarUML) persist shared semantic entities across use cases and class diagrams.
+The professor notes an important modelling limitation: when mapping UML bidirectional associations to Alloy signatures, specifying a field multiplicity (such as 'hasKey : lone EKey' or 'owns : set Luggage') only enforces the cardinality constraint in that one direction. To completely represent the full bidirectional multiplicity of a UML class diagram, explicit facts must be written to constrain the reverse side of the associations.
+
+## Luggage Keeper GenKey: Static Allocation vs Dynamic Creation and Free-Key Constraints
+
+**Reference:** 03b.AlloyExercises.pdf, slide 60
+
+In analyzing the 'GenKey' temporal operation in Alloy 6, the professor reveals critical modelling nuances: (1) Because 'sig EKey' is static (immutable), GenKey does not dynamically instantiate a new key; it merely selects an existing key atom from the universe and binds it. To guarantee proper semantics, an additional check ('not ek in Locker.hasKey') should be enforced so an in-use key is not reassigned. (2) Alternatively, the signature itself can be declared mutable ('var sig EKey') with a predicate specifying that the key atom was not in the set in the current state and is introduced in the next state. (3) In response to a student question on whether the locker is free, the professor acknowledges that GenKey assumes luggage is already present ('storesLuggage' = storesLuggage') and only handles assigning the key; to capture the full operation of inserting luggage and generating a key, the predicate must be extended.
+
+## Alternative Modelling Strategy for Towers and Cubes: Hierarchy Specialization vs Size Attribute
+
+**Reference:** 03b.AlloyExercises.pdf, slide 45
+
+When introducing the Towers and Cubes problem, the professor contrasts two alternative modeling approaches: (1) defining a separate 'Size' signature and giving 'Cube' a 'size: Size' field (as shown on slide 45), versus (2) making 'Cube' an abstract signature and subclassing it directly ('sig LargeCube extends Cube', etc.). The professor points out that while using an attribute is functional, it results in a more verbose specification with more complex conditional rules compared to relying directly on subsignature typing.
