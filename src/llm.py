@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 import os
+import base64
+from pathlib import Path
 from typing import Any
 
 class LLMClient:
@@ -26,25 +28,43 @@ class LLMClient:
             raise RuntimeError("llm.max_tokens must be a positive integer")
         self.reasoning = settings.get("reasoning")
         self.provider = settings.get("provider")
+        self.pdf_engine = settings.get("pdf_engine")
         if self.reasoning is not None and not isinstance(self.reasoning, dict):
             raise RuntimeError("llm.reasoning must be a YAML mapping")
         if self.provider is not None and not isinstance(self.provider, dict):
             raise RuntimeError("llm.provider must be a YAML mapping")
         self.client = OpenAI(api_key=api_key, base_url=settings.get("base_url", "https://openrouter.ai/api/v1"))
 
-    def json(self, system: str, prompt: str) -> dict[str, Any]:
+    def json(self, system: str, prompt: str, files: list[Path] | None = None) -> dict[str, Any]:
         try:
             provider_options: dict[str, Any] = {}
             if self.reasoning is not None:
                 provider_options["reasoning"] = self.reasoning
             if self.provider is not None:
                 provider_options["provider"] = self.provider
+            if files and self.pdf_engine:
+                provider_options["plugins"] = [{
+                    "id": "file-parser",
+                    "pdf": {"engine": self.pdf_engine},
+                }]
+            user_content: str | list[dict[str, Any]] = prompt
+            if files:
+                user_content = [{"type": "text", "text": prompt}]
+                for path in files:
+                    encoded = base64.b64encode(path.read_bytes()).decode("ascii")
+                    user_content.append({
+                        "type": "file",
+                        "file": {
+                            "filename": path.name,
+                            "file_data": f"data:application/pdf;base64,{encoded}",
+                        },
+                    })
             request: dict[str, Any] = {
                 "model": self.model,
                 "temperature": self.temperature,
                 "max_tokens": self.max_tokens,
                 "response_format": {"type": "json_object"},
-                "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
+                "messages": [{"role": "system", "content": system}, {"role": "user", "content": user_content}],
             }
             if provider_options:
                 request["extra_body"] = provider_options
@@ -56,11 +76,27 @@ class LLMClient:
             raise RuntimeError(f"{prefix}: {detail}") from exc
         content = response.choices[0].message.content
         if not content:
-            raise RuntimeError("The model returned an empty response")
+            choice = response.choices[0]
+            reasoning = getattr(choice.message, "reasoning_content", None) or ""
+            raise RuntimeError(
+                "The model returned empty visible content "
+                f"(finish_reason={choice.finish_reason!r}, reasoning_characters={len(reasoning)}). "
+                "Increase llm.max_tokens or use a model with a smaller reasoning budget."
+            )
+        content = content.strip()
+        if content.startswith("```"):
+            first_newline = content.find("\n")
+            content = content[first_newline + 1:] if first_newline >= 0 else content
+            if content.endswith("```"):
+                content = content[:-3].rstrip()
         try:
             value = json.loads(content)
         except json.JSONDecodeError as exc:
-            raise RuntimeError(f"The model returned invalid JSON: {exc}") from exc
+            finish_reason = response.choices[0].finish_reason
+            raise RuntimeError(
+                f"The model returned invalid JSON ({len(content)} characters, "
+                f"finish_reason={finish_reason!r}): {exc}"
+            ) from exc
         if not isinstance(value, dict):
             raise RuntimeError("The model response must be a JSON object")
         return value

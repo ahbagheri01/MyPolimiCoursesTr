@@ -1,21 +1,27 @@
 llm:
-  model: zai-org/GLM-5.3-Flash
-  base_url: https://api.together.xyz/v1
-  api_key_env: TOGETHER_API_KEY
+  model: google/gemini-3.8-flash
+  base_url: https://openrouter.ai/api/v1
+  api_key_env: OPENROUTERAPIKEY
   temperature: 0.1
   max_tokens: 24000
+  # Forward each mapped PDF file directly to the model.
+  pdf_engine: native
+  reasoning:
+    effort: minimal
+    exclude: true
 
 cache_dir: .lecture-agent-cache
 
 workflow:
-  transcript_chunk_chars: 45000
-  material_max_chars: 120000
-  review_transcript_max_chars: 160000
+  # Zero means unlimited: send each lecture transcript and its mapped materials in full.
+  transcript_chunk_chars: 0
+  material_max_chars: 0
+  review_transcript_max_chars: 0
   candidate_batch_size: 20
 
 lectures:
   - id: DM2026-01-CourseIntroduction-DataMining
-    status: INCOMPLETE
+    status: COMPLETE
     course: Data Mining
     transcripts:
       - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-01-CourseIntroduction-DataMining.txt
@@ -24,7 +30,7 @@ lectures:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-01-DataMining.pdf'
 
   - id: DM2026-02-DataRepresentation
-    status: INCOMPLETE
+    status: COMPLETE
     course: Data Mining
     transcripts:
       - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-02-DataRepresentation.txt
@@ -32,7 +38,7 @@ lectures:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-02-DataRepresentation.pdf'
 
   - id: DM2026-03-AssociationRules
-    status: INCOMPLETE
+    status: COMPLETE
     course: Data Mining
     transcripts:
       - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-03-AssociationRules.txt
@@ -40,7 +46,7 @@ lectures:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-04-AssociationRules.pdf'
 
   - id: DM2026-04-AssociationRules
-    status: INCOMPLETE
+    status: COMPLETE
     course: Data Mining
     transcripts:
       - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-04-AssociationRules.txt
@@ -48,7 +54,7 @@ lectures:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-04-AssociationRules.pdf'
 
   - id: DM2026-05-Clustering
-    status: INCOMPLETE
+    status: COMPLETE
     course: Data Mining
     transcripts:
       - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-05-Clustering.txt
@@ -56,7 +62,7 @@ lectures:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-05-Clustering.pdf'
 
   - id: DM2026-06-HierarchicalClusteringAndNotebooks
-    status: INCOMPLETE
+    status: COMPLETE
     course: Data Mining
     transcripts:
       - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-06-HierarchicalClusteringAndNotebooks.txt
@@ -64,7 +70,7 @@ lectures:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-06-HierarchicalClustering.pdf'
 
   - id: DM2026-07-RepresentationBasedClustering
-    status: INCOMPLETE
+    status: COMPLETE
     course: Data Mining
     transcripts:
       - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-07-RepresentationBasedClustering.txt
@@ -72,7 +78,7 @@ lectures:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-07-RepresentativeBasedClustering.pdf'
 
   - id: DM2026-08-DBScanNotebooksAndLinearRegression
-    status: INCOMPLETE
+    status: COMPLETE
     course: Data Mining
     transcripts:
       - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-08-DBScanNotebooksAndLinearRegression.txt

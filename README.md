@@ -129,6 +129,6 @@ also prevents OpenRouter from reserving credits for a model's much larger theore
 maximum output.
 
 Provider-specific `reasoning` and `provider` mappings can optionally be configured in
-YAML. When omitted, the client sends only standard OpenAI-compatible request fields.
-The Data Mining configuration uses Together's OpenAI-compatible endpoint and reads its
-key from `TOGETHER_API_KEY`.
+YAML. The Data Mining configuration uses OpenRouter and sends mapped PDFs as base64
+`file` content blocks with native PDF processing, rather than flattening them to local
+text first.

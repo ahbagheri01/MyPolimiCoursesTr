@@ -29,7 +29,12 @@ class LectureWorkflow:
     def run(self, lecture: LectureConfig) -> LectureResult:
         transcripts = load_transcripts(lecture.transcripts)
         material_paths, limitations = expand_material_paths(lecture.materials)
-        materials = [load_material(path, self.cache_dir) for path in material_paths]
+        materials = [
+            LoadedMaterial(path, "[PDF attached directly to the model]")
+            if path.suffix.lower() == ".pdf"
+            else load_material(path, self.cache_dir)
+            for path in material_paths
+        ]
         limitations.extend(f"Unreadable material: {item.path} ({item.error})" for item in materials if item.error)
         candidates = self.extract_candidates(lecture.id, transcripts)
         decisions = self.compare_candidates(lecture.id, candidates, materials, limitations)
@@ -55,9 +60,15 @@ class LectureWorkflow:
                 lecture_id=lecture_id, chunk_number=index + 1, chunk_count=len(primary_chunks),
                 transcripts="\n\n".join(evidence)))
             for item in _object_list(payload, "candidates"):
+                supporting_evidence = _first_text(
+                    item, "evidence", "supporting_evidence", "source_evidence", "quote"
+                )
+                if supporting_evidence is None:
+                    # Source grounding is mandatory; silently exclude unsupported candidates.
+                    continue
                 candidates.append(Candidate(
                     id=f"C{len(candidates) + 1:04d}", topic=_required(item, "topic"),
-                    insight=_required(item, "insight"), evidence=_required(item, "evidence"),
+                    insight=_required(item, "insight"), evidence=supporting_evidence,
                     transcript_source=str(item.get("transcript_source") or transcripts[0][0].name),
                     timestamp=_nullable(item.get("timestamp")), usefulness=str(item.get("usefulness") or ""),
                     uncertain=bool(item.get("uncertain", False))))
@@ -69,7 +80,7 @@ class LectureWorkflow:
             payload = self.client.json(SYSTEM_PROMPT, COMPARE_PROMPT.format(
                 lecture_id=lecture_id, limitations="; ".join(limitations) or "None",
                 candidates=json.dumps([c.to_dict() for c in batch], ensure_ascii=False, indent=2),
-                materials=self._materials_text(materials)))
+                materials=self._materials_text(materials)), files=self._pdf_paths(materials))
             returned = {str(item.get("candidate_id")): item for item in _object_list(payload, "decisions")}
             for candidate in batch:
                 item = returned.get(candidate.id)
@@ -87,7 +98,7 @@ class LectureWorkflow:
             lecture_id=lecture_id, limitations="; ".join(limitations) or "None",
             accepted_notes=json.dumps([n.to_dict() for n in accepted], ensure_ascii=False, indent=2),
             transcripts=self._transcripts_text(transcripts, int(self.settings.get("review_transcript_max_chars", 160_000))),
-            materials=self._materials_text(materials)))
+            materials=self._materials_text(materials)), files=self._pdf_paths(materials))
         notes: list[Note] = []
         for item in _object_list(payload, "notes"):
             classification = str(item.get("classification", "")).upper()
@@ -114,6 +125,10 @@ class LectureWorkflow:
     def _materials_text(self, materials: list[LoadedMaterial]) -> str:
         sections = [f"--- {item.path.name} ---\n{item.text}" for item in materials if item.text]
         return _truncate_sections(sections, self.material_max_chars) or "[No readable mapped materials]"
+
+    @staticmethod
+    def _pdf_paths(materials: list[LoadedMaterial]) -> list[Path]:
+        return [item.path for item in materials if item.path.suffix.lower() == ".pdf"]
 
     @staticmethod
     def _transcripts_text(transcripts: list[tuple[Path, str]], limit: int) -> str:
@@ -168,8 +183,10 @@ def write_course_indexes(results: Iterable[LectureResult]) -> list[Path]:
 
 
 def _chunks(text: str, size: int) -> list[str]:
-    if size < 1:
-        raise ValueError("Chunk size must be positive")
+    if size == 0:
+        return [text]
+    if size < 0:
+        raise ValueError("Chunk size must be zero (unlimited) or positive")
     paragraphs = re.split(r"(?<=\n)\s*\n", text)
     chunks: list[str] = []
     current = ""
@@ -196,6 +213,10 @@ def _batched(items: list[Any], size: int) -> Iterable[list[Any]]:
 def _truncate_sections(sections: list[str], limit: int) -> str:
     if not sections:
         return ""
+    if limit == 0:
+        return "\n\n".join(sections)
+    if limit < 0:
+        raise ValueError("Text limit must be zero (unlimited) or positive")
     allowance = max(1, limit // len(sections))
     rendered = [section if len(section) <= allowance else section[:allowance] + "\n[truncated]" for section in sections]
     return "\n\n".join(rendered)[:limit]
@@ -217,6 +238,14 @@ def _required(item: dict[str, Any], key: str) -> str:
 
 def _nullable(value: Any) -> str | None:
     return value.strip() if isinstance(value, str) and value.strip() else None
+
+
+def _first_text(item: dict[str, Any], *keys: str) -> str | None:
+    for key in keys:
+        value = _nullable(item.get(key))
+        if value is not None:
+            return value
+    return None
 
 
 def _safe_name(value: str) -> str:
