@@ -3,74 +3,68 @@
 **Transcripts:** DM2026-07-RepresentationBasedClustering.txt
 **Materials:** E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-07-RepresentativeBasedClustering.pdf
 
-## Cluster Characterization and Personas
+## Cluster Characterization and the Concept of Personas
 
-**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slides 2-3
+**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slide 2-3
 
-While slides state that each cluster is summarized by a point or parameter vector, the oral lecture contextualizes why this is necessary: raw cluster output is just numeric label vectors across millions of points, which cannot be presented directly to stakeholders without synthesizing them into personas or parameter summaries.
+Hierarchical clustering outputs raw cluster label assignments for all data points (e.g., millions of 0s and 1s), which cannot be directly presented to stakeholders. To solve this, practitioners build a 'characterization' of the clusters, such as customer personas in market segmentation (e.g., for supermarket chains like Esselunga or Carrefour). In an academic example, clustering students based on distance from the university, age, and academic score produces distinct personas—such as retired seniors taking degree courses for leisure, or international PhD students who tend to pursue degrees later in life compared to traditional Italian students.
 
-## Centroids vs. Medoids
+## Centroids vs. Medoids: Synthetic Representations vs. Real Data Points
 
-**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slides 2-3
+**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slide 2-3
 
-Centroids represent the mathematical average feature vector of the points, whereas medoids correspond to an actual, existing data point within the dataset nearest to all other points in the cluster.
+The representative parameter vector of a cluster differs fundamentally between centroids and medoids. While a centroid is typically the mathematical average across variables and may not correspond to an actual individual in the dataset, a medoid is an actual data point within the cloud that is closest to all other members (e.g., pointing to a specific real student, Giovanni, as the prototypical average student).
 
-## Greedy / Hill-Climbing Nature of Partitioning Algorithms
+## Greedy Nature and Local Optima Terminology
 
-**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slides 4, 6, 15
+**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slide 4, slide 6
 
-Partitioning methods act as greedy hill-climbing heuristics navigating towards local optima because evaluating all O(k^N / k!) possible partitions for a global optimum is computationally intractable.
+Because exhaustive brute-force evaluation of all O(k^N / k!) partitions is computationally impossible, representative clustering algorithms rely on greedy, hill-climbing heuristics. When discussing optimization pitfalls, the professor emphasizes that the issue should generally be referred to as getting stuck in a 'local optimum' rather than strictly a 'local minimum', as clustering objectives can be formulated as either minimization (SSE) or maximization.
 
-## K-Means Geometric Assumption and Spherical Clusters
-
-**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slides 52, 54, 57, 79
-
-K-Means' geometric limitation to spherical/globular shapes directly stems from assignment via Euclidean distance to a single central point, causing it to fail on elongated or non-axis-aligned structures.
-
-## K-Means Stopping Criteria and Oscillation Handling
+## Oscillation and Convergence Tolerance in K-Means
 
 **Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slide 14
 
-Beyond standard centroid convergence, practical K-Means implementations apply an oscillation tolerance threshold (e.g., stopping when <0.1% of boundary points swap between clusters).
+In standard implementations, K-Means convergence is not only checked by zero changes in cluster assignments or tiny shifts in centroid locations, but also by stopping when fewer than a specific threshold of points change assignments (e.g., fewer than 0.1% oscillating back and forth between adjacent clusters due to ambiguous borderline positioning).
 
-## K-Means Initialization Heuristics and Dendrogram Seeding
+## Hierarchical Clustering Initialization for K-Means
 
-**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slide 18, 47
+**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slide 18, slide 47
 
-A concrete hybrid initialization method involves hierarchically clustering a small data sample, cutting the resulting dendrogram at K, and computing the centroids of those sample clusters as seeds for K-Means.
+A powerful initialization strategy for K-Means is to run hierarchical clustering on a small sample of the dataset. Since hierarchical clustering does not assume spherical/globular shapes and the target number of clusters k is already known, one can simply cut the resulting dendrogram at level k and compute the centroids of those sample clusters to initialize K-Means.
 
-## Bisecting K-Means
+## Bisecting K-Means: Splitting Heuristic via Cluster SSE
 
-**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slide 36
+**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slide 36-46
 
-Bisecting K-Means iteratively selects the cluster with the largest sum of squared errors (SSE) and splits it using 2-means, progressively increasing clusters until reaching K.
+In bisecting K-Means, the algorithm iteratively splits clusters by applying basic 2-means clustering only to the cluster with the highest Sum of Squared Errors (SSE), as the largest SSE indicates the least compact, most expanded cluster. It halts when further bisections yield negligible decreases in SSE.
 
-## Why Outlier Removal / Heuristics Are Done in Pre/Post-Processing
+## Software Engineering Pragmatics: Modifying Libraries vs. Pre/Post-Processing
 
 **Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slide 50
 
-Outlier detection and cluster merging/splitting are performed as pre- or post-processing steps because production data science relies on standardized, verified libraries (e.g., scikit-learn); modifying core library source code introduces unacceptable liability and bug risks.
+Outlier removal and cluster splitting/merging can theoretically be integrated into the internal iterations of clustering algorithms, but in production data science they are almost always implemented as pre- or post-processing steps. Unless employed in specialized R&D teams building proprietary algorithms from scratch, data scientists should never modify production third-party libraries (such as scikit-learn), as maintaining forks of established libraries introduces immense operational and maintenance liability.
 
-## Stochastic Elbow Analysis Bumps
+## Non-Monotonicity Artifacts in Single-Run Elbow Plots
 
-**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slide 62
+**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slide 62-63
 
-Elbow plots of WCSS/SSE across increasing K should theoretically decrease monotonically; non-monotonic bumps in empirical curves indicate single stochastic runs getting trapped in inferior local minima, highlighting the necessity of multiple runs per K.
+While theoretical Within-Cluster Sum of Squares (SSE) should strictly decrease monotonically as k increases (eventually reaching zero when k equals the total number of data points), empirical elbow plots from a single K-Means run frequently exhibit unexpected bumps or increases. This non-monotonic behavior is an artifact of K-Means' stochastic initialization converging to suboptimal local minima at certain values of k, highlighting why multiple runs (or clustering stability methods) are essential before plotting elbow curves.
 
-## Mean Shift Clustering
+## Mean Shift: Computer Vision Origins and Basin of Attraction Concept
 
-**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slides 66, 79, 81
+**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slide 65-76
 
-Mean Shift originated in computer vision for image segmentation, operating as a non-parametric mode-seeking density algorithm with O(N^2) complexity.
+Mean Shift originated in computer vision for image segmentation, where standard pixel-by-pixel clustering fails because adjacent pixels of varying color intensities within an object (e.g., wood floor, metal, shirts) belong to a single semantic region. Mean Shift operates by treating modal convergence points as 'basins/points of attraction' (drawing an analogy to dynamical control systems), assigning all data points whose trajectory paths lead to the same attraction mode into that cluster.
 
-## Mean Shift Bandwidth Selection and Overlap
+## Bandwidth Tuning via Knee/Elbow Analysis and Intersection Tie-Breaking in Mean Shift
 
-**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slide 80
+**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slide 78-81
 
-Bandwidth in Mean Shift can be tuned via an elbow-style curve against validation metrics; when search windows overlap across boundaries, point assignment is determined by the update order of the specific implementation.
+Selecting the window size (bandwidth h) in Mean Shift cannot be done automatically without trade-offs: setting it too large collapses the entire dataset into one cluster, while setting it too small fragments the data into excessive clusters. Practitioners can tune bandwidth by plotting an internal/external validation metric against bandwidth values to find a 'sweet spot' using knee/elbow analysis. Furthermore, when running Mean Shift in parallel, points caught in intersecting bandwidth windows are typically assigned to whichever shifting window updates first, depending on the software implementation.
 
-## Expectation-Maximization and Gaussian Mixture Models
+## Gaussian Mixture Models vs. K-Means: Shape Adaptation and Soft Assignments
 
-**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slides 83-84
+**Reference:** DM2026-2027-07-RepresentativeBasedClustering.pdf, slide 83-99
 
-GMM/EM conceptually generalizes K-Means from rigid spherical boundaries to soft probabilistic clustering by optimizing not just cluster positions (means) but also cluster geometry (covariance matrices) and component proportions (priors).
+Gaussian Mixture Models (GMM) via Expectation-Maximization extend K-Means from rigid spherical partitions to probabilistic soft assignments. Whereas K-Means only moves centroid positions to minimize distance, GMM simultaneously shifts the centroids (mean vectors mu_i) and dynamically stretches/reshapes the cluster geometry by adjusting the covariance matrices (sigma_i), assigning each point a posterior probability of belonging to each cluster rather than a binary hard assignment.

@@ -3,42 +3,74 @@
 **Transcripts:** DM2026-08-DBScanNotebooksAndLinearRegression.txt
 **Materials:** E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-08-DensityBasedClustering.pdf, E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-09-LinearRegression.pdf
 
-## Density-based Clustering (DBSCAN)
+## Eye-tracking trajectory analysis as a real-world application of DBSCAN
+
+**Reference:** DM2026-2027-08-DensityBasedClustering.pdf, slide 5
+
+Density-based clustering is particularly effective for analyzing eye-tracking trajectories recorded while human subjects examine images on a screen. Points represent gaze dwell times and fixation locations. DBSCAN clusters these spatial trajectory points to reveal distinct scanning patterns and identify behavioral differences or cognitive/visual conditions.
+
+## Implementation rationale for including a point in its own epsilon neighborhood
 
 **Reference:** DM2026-2027-08-DensityBasedClustering.pdf, slide 7
 
-Including the point x itself within its own epsilon neighborhood is a computational simplification rather than a mathematical quirk, avoiding edge/special-case handling during spatial queries and searches.
+In the formal definition of DBSCAN's epsilon neighborhood, x is explicitly included in N_epsilon(x). Beyond formal convenience, this simplifies search query implementation in code by avoiding edge cases and boundary checks.
 
-## Clustering Algorithms Choice & Practical Advice
+## Flood-fill analogy for density-connected component expansion
+
+**Reference:** DM2026-2027-08-DensityBasedClustering.pdf, slide 11
+
+The iterative expansion of density-connected points from core objects functions analogously to the 'bucket fill' tool in image editors: it colors a seed point and expands to contiguous matching neighbors, propagating outward across all directly reachable core points.
+
+## Spatial index structures (kd-trees) and Google Maps spatial query analogy
+
+**Reference:** DM2026-2027-08-DensityBasedClustering.pdf, slide 12
+
+Computing epsilon neighborhoods naively requires an O(n^2) nested loop. DBSCAN achieves O(n log n) in low-to-moderate dimensions by indexing points in spatial structures like kd-trees. The professor compares this to querying nearby restaurants on Google Maps for Milan: instead of scanning every restaurant citywide, the system queries only within the immediate spatial region.
+
+## HDBSCAN dendrogram construction and cluster stability
+
+**Reference:** DM2026-2027-08-DensityBasedClustering.pdf, slide 17
+
+Standard DBSCAN struggles with datasets containing multi-density regions because epsilon is global. HDBSCAN addresses this by transforming pairwise distances into mutual reachability distances, building a hierarchical dendrogram, and extracting a flat clustering based on cluster stability across density scales.
+
+## K-means over-reliance and lack of cluster stability evaluation in practice
 
 **Reference:** DM2026-2027-08-DensityBasedClustering.pdf, slide 19
 
-K-means is often used blindly without verifying cluster stability, and in practice, if cluster stability testing is applied to typical K-means outputs, reliable solutions are rarely found.
+K-means is heavily overused as a default clustering method. If K-means performs well, the underlying problem is usually trivially easy. In real-world data, practitioners rarely verify cluster stability, which often reveals K-means solutions to be unstable and unreliable.
 
-## Silhouette Analysis
+## Silhouette coefficient interpretation and extreme values (-1, 0, +1)
 
-A silhouette coefficient can reach -1 in the extreme scenario where a point is an isolated centroid of its assigned cluster (a=0) or when distance to an alternative cluster is drastically smaller than to its assigned cluster, proving severe misassignment.
+For point x_i, silhouette s(i) = (b(i) - a(i)) / max(a(i), b(i)), where a is mean intra-cluster distance and b is mean distance to the nearest alternative cluster. A score near +1 indicates tight clustering within its group; near 0 indicates the point is on the decision boundary; and -1 (e.g., when b=0, isolated at the neighbor's centroid) indicates misclassification where the point is closer to an adjacent cluster.
 
-## Silhouette Analysis
+## Visual silhouette analysis using sorted cluster bands
 
-Silhouette analysis inherently favors convex clusters because it relies on nearest neighboring cluster distance, mirroring K-means geometric assumptions.
+Relying on the average silhouette score alone can be misleading. Practitioners sort silhouette values within each cluster to plot silhouette bands against the dataset's average score. A clustering is considered flawed if cluster bands fall entirely below the average score or feature substantial negative silhouette tails.
 
-## Silhouette Analysis
+## Connectivity constraints in agglomerative clustering via k-nearest neighbor graphs
 
-True silhouette analysis relies on inspecting cluster-wise silhouette band plots and checking for values dipping below the average or into negative territory, rather than merely relying on a 2D scatter plot or a scalar average.
+Standard agglomerative clustering can prematurely bridge separate clusters when individual points are close. Applying connectivity constraints (restricting merges to k-nearest neighbor graph edges, e.g., k=10) prevents long-range merges and preserves non-convex structures like concentric rings.
 
-## Hierarchical Clustering with Connectivity Constraints
-
-Connectivity constraints (e.g., using a k-neighbors graph) in agglomerative clustering restrict merges to an instance's k nearest neighbors, preventing unnatural distant jumps between structures (such as concentric circles).
-
-## Linear Regression Baseline
+## The mean as the baseline predictor and minimum RSS benchmark
 
 **Reference:** DM2026-2027-09-LinearRegression.pdf, slides 4-6, 22
 
-The sample mean represents the minimal baseline predictor, establishing the Total Sum of Squares (TSS) against which the regression model's RSS must improve.
+In regression, the mean response y_bar serves as the primary baseline predictor, with total sum of squares TSS = RSS(mean). Any acceptable regression model must achieve an RSS significantly lower than TSS; models that underperform the mean are strictly invalid.
 
-## Evaluation and Model Validation
+## Exam question analogy for training vs. test set evaluation
 
-**Reference:** DM2026-2027-09-LinearRegression.pdf, slides 30, 34-35
+**Reference:** DM2026-2027-09-LinearRegression.pdf, slide 29
 
-A single train/test split risks pessimistic evaluation if difficult edge cases end up in the test set without being trained on, or overly optimistic evaluation if difficult cases are trained on and the test set contains only easy samples; K-fold cross-validation ensures every difficult case is tested objectively.
+Evaluating a model on the data used to train it gives an overly optimistic performance measure. The professor compares this to testing students on the exact problem solved on the blackboard the previous day: high performance reflects memorization rather than generalization.
+
+## Non-normal response distributions in linear regression and time-to-service
+
+**Reference:** DM2026-2027-09-LinearRegression.pdf, slide 16
+
+While standard linear regression assumes a normally distributed target variable, real-world data often violates this. The professor cites customer 'time-to-service' / waiting time as a classic example of a right-skewed, heavy-tailed non-normal distribution requiring specialized regression models.
+
+## Why k-fold cross-validation eliminates holdout partition luck
+
+**Reference:** DM2026-2027-09-LinearRegression.pdf, slides 34-36
+
+A single train/test holdout split can be biased by luck: an unusually hard sample ending up in the test set produces overly pessimistic scores, while ending up in the training set produces overly optimistic scores. K-fold cross-validation ensures every data point appears in the test set exactly once, making the averaged performance estimate robust.

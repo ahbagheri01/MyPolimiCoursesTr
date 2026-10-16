@@ -3,110 +3,44 @@
 **Transcripts:** DM2026-02-DataRepresentation.txt
 **Materials:** E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-02-DataRepresentation.pdf
 
-## Association Rules
+## Sine and Cosine Encoding for Cyclic Attributes
 
-Association analysis originated in the database community driven by the emergence of cheap disk storage for basket data; the widely repeated beer-and-diapers story is an urban legend.
+**Reference:** Slide 20
 
-## Association Rules Metrics
+Cyclic ordinal/numerical attributes (like days of the week, where Sunday loops back to Monday) present a distance discontinuity if encoded linearly (e.g., 0 to 6). To preserve uniform distances between adjacent points on the cycle, map the domain onto a unit circle divided into equal angles (e.g., 360°/7 for days of the week) and represent each day as a pair of coordinates using sine and cosine. A critical modeling consequence of this transformation is that the single original attribute is replaced by two attributes that must always remain together and cannot be separated during feature selection.
 
-Lift measures surprise or unexpectedness of a rule, where values significantly greater than 1 indicate an unexpected association, complementing frequency (support) and certainty (confidence).
+## Contextual Definition of Outliers: Domain Relativity in CMC Dataset
 
-## Data Mining Landscape & Competitors
+**Reference:** Slide 11-12
 
-Outlier analysis can be conceptualized as the inverse of clustering; while deep learning handles unstructured data preprocessing, gradient boosting and random forests are its main competitors on tabular tasks.
+Identifying whether a value is an outlier requires domain knowledge and cultural context rather than purely statistical filtering. In the Contraceptive Method Choice (CMC) dataset, European students frequently flagged 8 or 10 children as outliers based on European demographics; however, in other countries and historical demographics, families of 8 to 13 children are not abnormal. Outliers are strictly 'in the eye of the beholder.'
 
-## Subjectivity and Search in Data Mining
+## Practical Protocol for Missing Data: Source Inquiry over Modeling and Clustering
 
-Evaluation of pattern interestingness is frequently subjective rather than objective depending on the user; modeling in machine learning operates as a search across a space of models, analogously to AI state-space search.
+**Reference:** Slide 28, 34
 
-## Spurious Correlations and p-value Pitfalls
+Before attempting complex mathematical imputation or clustering, the primary real-world engineering response to missing data is to contact the data provider/client directly and ask why the data is missing. The professor specifically warns against using clustering to handle missing data or discover missingness scenarios ('I would die before I'm doing clustering'), as clustering customer behavior is highly subjective and leaves full responsibility for artifacts on the practitioner.
 
-Relying purely on low p-values across large public datasets can prove completely absurd spurious correlations (e.g., correlating pizza consumption with PhD conferrals), illustrating how statistics can be manipulated without domain validity.
+## Theoretical vs. Practical Library Capabilities for Missing and Categorical Data
 
-## Data Representation: Tabular Universality
+**Reference:** Slide 28, 38, 40
 
-**Reference:** DM2026-2027-02-DataRepresentation.pdf, page 3
+Theoretically, algorithms like decision trees and Naive Bayes natively handle missing values and categorical attributes without preprocessing. However, practical software implementations differ sharply: scikit-learn's implementations of decision trees and Naive Bayes historically mandate numerical input and reject missing values, forcing manual preprocessing. In contrast, standard implementations in Java or libraries like LightGBM/CatBoost natively handle them, whereas XGBoost strictly requires numerical data.
 
-Unstructured data (sound, images, text) must ultimately be converted into tabular representations because virtually no native learning algorithms operate without tabular input.
+## Dummy Variable Tracking for Single Imputation
 
-## Terminology & Field Identification
+**Reference:** Slide 33
 
-**Reference:** DM2026-2027-02-DataRepresentation.pdf, page 3
+When imputing missing values with a single summary statistic (like replacing missing temperature readings with the mean), the preprocessed feature appears complete, but information about uncertainty is lost. To preserve the fact that an entry was synthesized rather than observed, practitioners add a binary dummy indicator variable (0 for originally observed, 1 for imputed), allowing downstream models to distinguish actual observations from imputed approximations.
 
-Terminology reflects field background: 'instances' denotes traditional ML, 'data points' reflects statistics, 'observations' indicates empirical/field research, and 'cases/records' points to medicine or databases.
+## Practical Differences Between Label Encoding and One-Hot Encoding Pipelines
 
-## Attribute Types: Scale Context and Semantics
+**Reference:** Slide 43, 46
 
-**Reference:** DM2026-2027-02-DataRepresentation.pdf, pages 6-8
+Label encoding assigns an arbitrary integer (0 to n-1) to categorical levels. If applied, the mapping dictionary must be persistently stored; reapplying label encoding to newly arriving batches risks assigning different numbers to the same categories, creating feature misalignment. Conversely, one-hot encoding produces independent binary columns per category, meaning new data batches can be deterministically encoded without needing to remember an arbitrary integer key mapping.
 
-Categorical strings serve only as human-readable labels that algorithms treat as arbitrary tokens; interpreting numerical properties requires understanding domain context (such as whether zero is arbitrary or meaningful).
+## Discretization by Clustering in Practice
 
-## Ordinal vs Categorical Encoding Risks
+**Reference:** Slide 39, 47
 
-**Reference:** DM2026-2027-02-DataRepresentation.pdf, page 43
-
-Encoding nominal categories as integer ranks introduces an artificial ordering and numerical distance that distorts distance- and weight-based models (like linear models and neural networks), whereas decision trees remain invariant to monotonic orderings.
-
-## Domain Context in Outlier Detection
-
-**Reference:** DM2026-2027-02-DataRepresentation.pdf, pages 11-12, 36
-
-Outliers are context- and domain-dependent ('in the eye of the beholder'); e.g., large family sizes may appear as statistical outliers in modern Western contexts but remain regular observations in other settings.
-
-## Cyclic Attributes Representation
-
-**Reference:** DM2026-2027-02-DataRepresentation.pdf, pages 14, 20
-
-To preserve uniform distance between cyclical categories (e.g. Sunday to Monday), attributes can be projected onto a 2D unit circle using sine and cosine coordinates, and these two derived variables must remain paired during feature selection.
-
-## Hierarchical Attributes
-
-**Reference:** DM2026-2027-02-DataRepresentation.pdf, page 22
-
-Hierarchical geographic attributes (such as street addresses) can be handled either by choosing a specific categorical granularity level or by converting them into continuous spatial coordinates (latitude and longitude).
-
-## Missing Value Mechanisms & Meaning
-
-**Reference:** DM2026-2027-02-DataRepresentation.pdf, pages 26-27
-
-Missing values may represent valid informative responses (e.g., undecided voters). MNAR occurs when missingness depends on the unobserved value itself, whereas MAR depends on other observed features.
-
-## Handling Missing Values: First Principle
-
-**Reference:** DM2026-2027-02-DataRepresentation.pdf, page 34
-
-When encountering missing data, the primary and preferred initial step is to consult the data owner/client directly about why the data is missing before attempting automated imputation.
-
-## Clustering Limitations
-
-Clustering should generally be avoided or treated as a last resort because cluster definition and evaluation are inherently subjective and prone to unvalidated assumptions.
-
-## Imputation Indicator (Dummy Variables)
-
-**Reference:** DM2026-2027-02-DataRepresentation.pdf, page 33
-
-Standard imputation overwrites the signal that a value was missing; pairing imputed values with a binary dummy indicator (1 if imputed, 0 if observed) retains this metadata for the learning algorithm.
-
-## Risks of Listwise Deletion
-
-**Reference:** DM2026-2027-02-DataRepresentation.pdf, page 30
-
-Illustrating the risk of listwise deletion under MNAR: removing incomplete rows in an Italian regional dataset resulted in completely deleting data from two entire geographic regions.
-
-## Library Implementations vs Algorithmic Theory
-
-**Reference:** DM2026-2027-02-DataRepresentation.pdf, pages 28, 40
-
-While algorithms like decision trees theoretically handle missing or categorical data directly, Scikit-Learn's implementations strictly mandate numerical inputs and do not natively tolerate missing values or strings.
-
-## Label Encoding vs One-Hot Encoding
-
-**Reference:** DM2026-2027-02-DataRepresentation.pdf, pages 40-46
-
-Label encoding requires saving the fitted mapping dictionary for future test data and risks unintended ordering effects in linear models; one-hot encoding circumvents ordering and mapping retention at the expense of creating high-dimensional sparse representations.
-
-## Discretization by Clustering
-
-**Reference:** DM2026-2027-02-DataRepresentation.pdf, pages 39, 47
-
-Discretization deliberately discards unnecessary continuous precision when minute variations do not impact the target decision; binning values using clustering is considered by the professor to be one of the rare justifiable applications of clustering.
+Discretizing continuous numbers into categorical/ordinal buckets is useful to suppress irrelevant fine-grained noise and variance. A primary legitimate use case for clustering is discretization, where continuous variables naturally cluster into actionable segments (e.g., car rental age groups under 24 and over 70, or extreme income tiers where differences like one million vs. one million and one euro are practically irrelevant).

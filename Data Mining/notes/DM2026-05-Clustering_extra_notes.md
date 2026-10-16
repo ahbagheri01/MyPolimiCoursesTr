@@ -3,50 +3,48 @@
 **Transcripts:** DM2026-05-Clustering.txt
 **Materials:** E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-05-Clustering.pdf
 
-## Implementation-Specific Behavior of Jaccard Distance with Continuous/Real Values
+## Tabular Behavioral Patterns vs. High-Level Aggregates
 
-**Reference:** Slide 19
+While grouping raw images or text can be intuitive, tabular behavioral data complicates similarity definitions because identical high-level aggregates can conceal opposing underlying behaviors. For example, two grocery shoppers may both spend 200 euros a week, but one buys fresh groceries daily (around 25–30 euros per day) while the other buys everything in a single weekend trip. Similarly, spending 10,000 euros on technology over six years could occur as a single infrequent hardware purchase or distributed across recurring insurance and media subscriptions. High-level aggregates mask temporal and structural nuances that require deliberate distance metric design.
 
-While standard theoretical definitions treat Jaccard distance strictly over binary sets where (0,0) pairs are ignored, standard library implementations (such as scikit-learn) extend Jaccard distance to real-valued data. Specifically, attributes with matching non-zero continuous values are counted toward the numerator (intersection), while non-matching values still enter the denominator (union), demonstrating how library implementations may silently diverge from textbook definitions.
+## Jaccard vs. Hamming Semantics on Zeros and One-Hot Encoding
 
-## Semantic Asymmetry of Zero: One-Hot Dummy Variables vs. Categorical Codings
+**Reference:** DM2026-2027-05-Clustering.pdf#page=18
 
-**Reference:** Slide 18, 20-22
+The choice between Jaccard distance and Hamming distance hinges on the domain semantics of the value zero. In Jaccard distance, double zeros do not count; zero represents the absence of a measurement or an unpurchased item (crucial in sparse settings like Amazon recommendations where unbought items are practically infinite). In contrast, Hamming distance considers matching zeros as equal positive matches. When categorical features are one-hot encoded (creating dummy variables across mutually exclusive values), Jaccard distance treats zeroes as non-events across sparse options, whereas Hamming counts all shared zeroes as similarity matches. If an attribute has meaningful binary states (like humidity=low vs high encoded as 0 and 1), treating zero as absence alters the intended semantics.
 
-Zero holds fundamentally distinct semantic meanings depending on encoding context: in one-hot encoded dummy attributes, zero signifies the complete absence of a value (making Jaccard distance semantically appropriate by ignoring joint zeros), whereas in binary/ordinal encodings of attributes (e.g., humidity low vs. high encoded as 0/1), zero represents an active, observed measurement state (making Hamming distance or matching metrics relevant).
+## Scikit-Learn Implementation Nuance for Jaccard Distance with Real Values
 
-## Consistency Requirements for Pre-processing and Scaling State Across Batches and Deployment
+**Reference:** DM2026-2027-05-Clustering.pdf#page=19
 
-**Reference:** Slide 30
+While textbook definitions of Jaccard distance define it strictly on binary sets, scikit-learn's implementation accepts continuous/real-valued variables. In its calculation, columns where both entries are zero are ignored. When continuous attributes are included (e.g., temperature = 1.0 vs 1.0 or 1.0 vs 2.0), matching non-zero values contribute to the intersection numerator, whereas differing non-zero values count only in the union denominator. Thus, when temperature matches, distance is 1 - 2/3 ≈ 0.333, and when it differs, distance is 1 - 1/3 ≈ 0.667.
 
-Any data transformation or scaling mapping (e.g., category-to-integer mappings, MinMaxScaler bounds, or StandardScaler mean and variance) constitutes learned state that must be stored and reused consistently on newly incoming batches during deployment. Fitting a new scaler on subsequent operational data breaks coordinate comparability.
+## Cosine Similarity Invariance to Document Length Duplication
 
-## Outlier Truncation via Standard Deviation Bounds in Pre-processing
+**Reference:** DM2026-2027-05-Clustering.pdf#page=25
 
-**Reference:** Slide 30
+A primary geometric intuition for using cosine similarity in text frequency vectors is scale invariance under document repetition. If an entire text document is duplicated by concatenating it to itself (document + document), the raw word counts double, but the relative frequencies remain unchanged, keeping the document vector pointing in the exact same geometric direction (along the same ray from the origin). Cosine similarity evaluates the angle/projection between vectors, remaining entirely unaffected by document length expansion.
 
-Standard score (Z-score) normalization enables systematic outlier filtering prior to distance computation by evaluating points against sigma multiples under normal distribution assumptions; observations falling outside extreme thresholds (e.g., beyond ±6 standard deviations from the zero-mean center) are formally trimmed as non-representative outliers.
+## Preserving Normalization Parameters for Pipeline Deployment vs. Outlier Filtering
 
-## Practical Upper Bound on Cluster Cardinality for Business Reporting
+**Reference:** DM2026-2027-05-Clustering.pdf#page=30
 
-**Reference:** Slide 7
+Whenever data normalization (MinMaxScaler, StandardScaler) is performed, the computed parameters (min, max, mean, standard deviation) must be stored and reused on subsequent incoming data batches to maintain semantic consistency across the pipeline. Furthermore, standard score normalization (StandardScaler) provides an intuitive basis for outlier filtering: data points falling beyond ±6 standard deviations (or 6 to 8 sigma) can be identified as extreme outliers and filtered out before downstream modeling.
 
-Although hierarchical agglomerative clustering mathematically yields a full continuum down to individual data instances or any fine-grained K, actionable customer segmentation in industry cannot absorb large numbers of partitions. Business and marketing requirements dictate pruning the hierarchy to display no more than 15–20 top-level clusters.
+## Ratio of Distance Range to Minimum Distance Under the Curse of Dimensionality
 
-## Hierarchical Clustering Sampling Strategy for Large Datasets
+**Reference:** DM2026-2027-05-Clustering.pdf#page=37
 
-**Reference:** Slide 33
+The plot illustrating the curse of dimensionality plots (d_max - d_min) / d_min against feature count. As the number of dimensions increases (e.g., towards 100 dimensions and beyond), the difference between the maximum distance and the minimum distance between any pair of points rapidly approaches zero relative to the minimum distance. Consequently, the most dissimilar pair of points and the most similar pair of points end up at almost the identical distance, rendering proximity metrics ineffective for partitioning clusters in very high dimensions.
 
-Because agglomerative hierarchical clustering requires O(N^2) memory for pairwise distance storage and O(N^3) execution time, it cannot scale directly to large datasets (e.g., millions of records). In practice, practitioners run the deterministic hierarchical method on a representative sample of the data to extract the underlying structural taxonomy and discover hierarchy before applying scalable partitioning methods.
+## Practical Usability Limit on Number of Customer Clusters
 
-## Geometric Mechanics and Objective of Ward's Linkage Method
+Although hierarchical agglomerative clustering can mathematically produce any number of clusters from N down to 1, in practical business and marketing deployments, presenting more than 15 to 20 clusters is useless. Marketing agencies cannot operationalize campaigns targeting dozens or hundreds of micro-segments. Practitioners typically prune or inspect only the top levels of the dendrogram to identify between 10 and 15 actionable customer groups.
 
-**Reference:** DM2026-05-Clustering.pdf
+## Ward's Hierarchical Linkage and Cluster Compactness via SSE Increase
 
-Ward's hierarchical clustering linkage quantifies proximity not by geometric point separation, but by the net increase in Sum of Squared Errors (SSE / variance) resulting from merging two clusters. Merging two tight clusters that are distant from one another incurs a large SSE penalty due to the displaced shared centroid, meaning the algorithm prioritizes unions that maintain cluster compactness.
+Ward's distance, the default linkage criterion in scikit-learn, measures the proximity between two candidate clusters as the increase in total Sum of Squared Errors (SSE) that would result from merging them. If two compact clusters that are far apart are merged, their combined centroid falls in the empty space between them, leading to a massive increase in SSE. By minimizing the change in SSE at each step, Ward's method favors merging clusters that keep the resulting merged group as compact as possible around its new centroid.
 
-## Lance-Williams Generalized Update Recurrence Intuition
+## Generalized Lance-Williams Matrix Update Formula for Hierarchical Linkages
 
-**Reference:** DM2026-05-Clustering.pdf
-
-Rather than necessitating distinct algorithmic procedures for single linkage, complete linkage, average linkage, and Ward's method, all classical inter-cluster update metrics can be computed via a single parameterized algebraic recurrence formula by setting specific parameter weights.
+Rather than writing separate update algorithms for each cluster linkage type (single, complete/max, average, centroid, Ward's), practitioners and libraries use a unified recurrence equation (the Lance-Williams formula). By adjusting four parameters in this single update formula, all standard linkage measures can be computed uniformly when updating distance matrices during agglomerative clustering.
