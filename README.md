@@ -1,6 +1,6 @@
 # GPU Course Transcription
 
-`transcribe.py` transcribes every supported audio or video file directly inside a course folder. It supports four open speech-recognition models and processes them one at a time to fit an 8 GB NVIDIA GPU.
+`transcribe.py` transcribes every supported audio or video file directly inside a course folder. It supports five open speech-recognition models and processes them one at a time to fit an 8 GB NVIDIA GPU.
 
 ## Supported models
 
@@ -9,6 +9,7 @@
 | `qwen3` | `Qwen/Qwen3-ASR-1.7B` |
 | `canary` | `nvidia/canary-qwen-2.5b` |
 | `parakeet` | `nvidia/parakeet-tdt-0.6b-v3` |
+| `parakeet1.1b` | `nvidia/parakeet-tdt-1.1b` (English only) |
 | `whisper` | `openai/whisper-large-v3` |
 
 ## Installation
@@ -33,7 +34,7 @@ Activate the environment, then provide either a course folder or one media file:
 python transcribe.py "E:\amirhossein\Polimi\Video_C\ANN2DL" --models whisper
 ```
 
-Run all four models sequentially:
+Run all five models sequentially:
 
 ```powershell
 python transcribe.py "E:\amirhossein\Polimi\Video_C\ANN2DL" --models all
@@ -43,6 +44,18 @@ Run selected models:
 
 ```powershell
 python transcribe.py "ANN2DL" --models qwen3 parakeet whisper
+```
+
+Run the English-only 1.1B Parakeet model:
+
+```powershell
+python transcribe.py "ANN2DL" --models parakeet1.1b
+```
+
+Run the selected model group (Parakeet 0.6B v3, then Qwen3-ASR-1.7B):
+
+```powershell
+python transcribe.py "SOFTW2" --models selected
 ```
 
 Useful options:
@@ -65,15 +78,19 @@ ANN2DL/
     |-- Qwen3-ASR-1.7B/
     |-- canary-qwen-2.5b/
     |-- parakeet-tdt-0.6b-v3/
+    |-- parakeet-tdt-1.1b/
     `-- whisper-large-v3/
 ```
 
 The local `transcription_status.csv` ledger records running, completed, and failed attempts. A completed transcript is skipped on later runs when the source hash, model, and output file still match. Use `--force` to run it again. The ledger is intentionally excluded from Git because it contains machine-specific absolute paths.
+
+Interrupted lectures resume from saved chunk transcripts in the course's local `.asr-cache/` folder. Checkpoints are keyed by source SHA-256, model ID, chunk duration, and language. Audio chunks remain available after failure and are removed after successful completion; chunk transcripts are retained. Rerun the same command to resume. `--force` discards matching chunk transcripts and transcribes again. The cache is excluded from Git.
 
 ## Notes
 
 - CUDA is required unless `--allow-cpu` is supplied.
 - Input folders are scanned non-recursively.
 - Long recordings are normalized to 16 kHz mono WAV and split into five-minute chunks by default.
+- Canary uses its SALM loader and caps chunks at 30 seconds, including when running `--models all`.
 - Models are loaded and released sequentially. Do not run multiple copies against the same GPU or ledger.
 - The Whisper loader reads normalized WAV chunks directly with `soundfile`, so a system-wide FFmpeg installation is unnecessary.

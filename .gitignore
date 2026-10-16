@@ -24,6 +24,7 @@ transcription_status.csv
 
 # Model weights and local caches
 .cache/
+.asr-cache/
 *.nemo
 *.safetensors
 

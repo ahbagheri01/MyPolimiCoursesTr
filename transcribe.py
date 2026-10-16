@@ -5,9 +5,9 @@ import csv
 import gc
 import hashlib
 import importlib
+import json
 import subprocess
 import sys
-import tempfile
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -90,8 +90,30 @@ def _load_nemo_pretrained(nemo_asr: Any, model_id: str) -> Any:
 
 def _load_canary(device: str) -> LoadedModel:
     torch = _require_import("torch")
+    speechlm = _require_import("nemo.collections.speechlm2.models", "nemo_toolkit[asr] and peft")
+    model = speechlm.SALM.from_pretrained("nvidia/canary-qwen-2.5b")
+    model.eval()
+    model.to(device=device, dtype=torch.bfloat16 if device.startswith("cuda") else torch.float32)
+
+    def transcribe(audio_path: Path, _language: str | None) -> str:
+        with torch.inference_mode():
+            result = model.generate(
+                prompts=[[{
+                    "role": "user",
+                    "content": f"Transcribe the following: {model.audio_locator_tag}",
+                    "audio": [str(audio_path)],
+                }]],
+                max_new_tokens=512,
+            )
+        return str(model.tokenizer.ids_to_text(result[0].cpu())).strip()
+
+    return LoadedModel(transcribe=transcribe, resources=(model,))
+
+
+def _load_parakeet_model(device: str, model_id: str) -> LoadedModel:
+    torch = _require_import("torch")
     nemo_asr = _require_import("nemo.collections.asr", "nemo_toolkit[asr]")
-    model = _load_nemo_pretrained(nemo_asr, "nvidia/canary-qwen-2.5b")
+    model = _load_nemo_pretrained(nemo_asr, model_id)
     model.eval()
     model.to(device)
 
@@ -104,18 +126,11 @@ def _load_canary(device: str) -> LoadedModel:
 
 
 def _load_parakeet(device: str) -> LoadedModel:
-    torch = _require_import("torch")
-    nemo_asr = _require_import("nemo.collections.asr", "nemo_toolkit[asr]")
-    model = _load_nemo_pretrained(nemo_asr, "nvidia/parakeet-tdt-0.6b-v3")
-    model.eval()
-    model.to(device)
+    return _load_parakeet_model(device, "nvidia/parakeet-tdt-0.6b-v3")
 
-    def transcribe(audio_path: Path, _language: str | None) -> str:
-        with torch.inference_mode():
-            result = model.transcribe([str(audio_path)])
-        return _extract_nemo_text(result)
 
-    return LoadedModel(transcribe=transcribe, resources=(model,))
+def _load_parakeet_1_1b(device: str) -> LoadedModel:
+    return _load_parakeet_model(device, "nvidia/parakeet-tdt-1.1b")
 
 
 def _load_whisper(device: str) -> LoadedModel:
@@ -161,7 +176,12 @@ MODELS: dict[str, ModelSpec] = {
     "qwen3": ModelSpec("qwen3", "Qwen/Qwen3-ASR-1.7B", "Qwen3-ASR-1.7B", _load_qwen),
     "canary": ModelSpec("canary", "nvidia/canary-qwen-2.5b", "canary-qwen-2.5b", _load_canary),
     "parakeet": ModelSpec("parakeet", "nvidia/parakeet-tdt-0.6b-v3", "parakeet-tdt-0.6b-v3", _load_parakeet),
+    "parakeet1.1b": ModelSpec("parakeet1.1b", "nvidia/parakeet-tdt-1.1b", "parakeet-tdt-1.1b", _load_parakeet_1_1b),
     "whisper": ModelSpec("whisper", "openai/whisper-large-v3", "whisper-large-v3", _load_whisper),
+}
+
+MODEL_GROUPS = {
+    "selected": ("parakeet", "qwen3"),
 }
 
 
@@ -247,10 +267,13 @@ def normalize_audio_chunks(
 
 
 def select_models(names: Sequence[str]) -> list[ModelSpec]:
-    if "all" in names:
+    groups = [name for name in names if name in {"all", *MODEL_GROUPS}]
+    if groups:
         if len(names) != 1:
-            raise ValueError("Use '--models all' by itself, or list individual models.")
-        return list(MODELS.values())
+            raise ValueError(f"Use '--models {groups[0]}' by itself, or list individual models.")
+        if groups[0] == "all":
+            return list(MODELS.values())
+        return [MODELS[name] for name in MODEL_GROUPS[groups[0]]]
     unknown = [name for name in names if name not in MODELS]
     if unknown:
         raise ValueError(f"Unknown model(s): {', '.join(unknown)}")
@@ -293,6 +316,7 @@ def process(
     failures = 0
 
     for spec in specs:
+        model_chunk_seconds = min(chunk_seconds, 30) if spec.alias == "canary" else chunk_seconds
         pending: list[tuple[Path, Path]] = []
         for source in media:
             output = transcript_path(source, spec)
@@ -314,26 +338,50 @@ def process(
                               spec=spec, status="running", output=output)
                 try:
                     print(f"RUN  [{spec.alias}] {source.name}")
-                    with tempfile.TemporaryDirectory(prefix="course-asr-") as temp_dir:
-                        chunks = normalize_audio_chunks(
-                            source, Path(temp_dir), chunk_seconds
-                        )
-                        parts: list[str] = []
-                        for chunk_number, chunk in enumerate(chunks, start=1):
-                            print(
-                                f"CHUNK [{spec.alias}] {source.name} "
-                                f"{chunk_number}/{len(chunks)}"
-                            )
+                    identity = json.dumps(
+                        [source_hash, spec.model_id, model_chunk_seconds, language],
+                        ensure_ascii=False,
+                    )
+                    cache_key = hashlib.sha256(identity.encode("utf-8")).hexdigest()
+                    cache_dir = source.parent / ".asr-cache" / cache_key
+                    cache_dir.mkdir(parents=True, exist_ok=True)
+                    ready = cache_dir / "audio-ready.json"
+                    if force:
+                        for checkpoint in cache_dir.glob("audio-*.txt"):
+                            checkpoint.unlink()
+                    if ready.is_file():
+                        chunks = [cache_dir / name for name in json.loads(ready.read_text())]
+                    else:
+                        chunks = []
+                    if not chunks or any(not chunk.is_file() for chunk in chunks):
+                        for old_chunk in cache_dir.glob("audio-*.wav"):
+                            old_chunk.unlink()
+                        chunks = normalize_audio_chunks(source, cache_dir, model_chunk_seconds)
+                        ready.write_text(json.dumps([chunk.name for chunk in chunks]))
+                    parts: list[str] = []
+                    for chunk_number, chunk in enumerate(chunks, start=1):
+                        checkpoint = chunk.with_suffix(".txt")
+                        if checkpoint.is_file():
+                            print(f"RESUME [{spec.alias}] {source.name} {chunk_number}/{len(chunks)}")
+                            part = checkpoint.read_text(encoding="utf-8")
+                        else:
+                            print(f"CHUNK [{spec.alias}] {source.name} {chunk_number}/{len(chunks)}")
                             part = loaded.transcribe(chunk, language).strip()
-                            if part:
-                                parts.append(part)
-                        text = "\n".join(parts)
+                            temporary = checkpoint.with_suffix(".txt.tmp")
+                            temporary.write_text(part, encoding="utf-8")
+                            temporary.replace(checkpoint)
+                        if part:
+                            parts.append(part)
+                    text = "\n".join(parts)
                     output.parent.mkdir(parents=True, exist_ok=True)
                     output.write_text(text.rstrip() + "\n", encoding="utf-8")
                     append_ledger(ledger_path, source=source, source_hash=source_hash,
                                   spec=spec, status="finished", output=output)
                     finished.add((source_hash, spec.model_id, str(output.resolve())))
                     print(f"DONE [{spec.alias}] {output}")
+                    for chunk in chunks:
+                        chunk.unlink(missing_ok=True)
+                    ready.unlink(missing_ok=True)
                 except Exception as exc:
                     failures += 1
                     append_ledger(ledger_path, source=source, source_hash=source_hash,
@@ -363,8 +411,8 @@ def build_parser() -> argparse.ArgumentParser:
         description="Transcribe a course folder or media file with CUDA ASR models."
     )
     parser.add_argument("input", nargs="?", help="Course folder or individual media file")
-    parser.add_argument("--models", nargs="+", choices=[*MODELS, "all"],
-                        help="One or more model aliases, or 'all'")
+    parser.add_argument("--models", nargs="+", choices=[*MODELS, *MODEL_GROUPS, "all"],
+                        help="One or more model aliases, 'selected', or 'all'")
     parser.add_argument("--language", help="Optional language hint for Qwen and Whisper")
     parser.add_argument(
         "--chunk-seconds",

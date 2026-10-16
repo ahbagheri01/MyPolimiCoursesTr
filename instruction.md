@@ -11,6 +11,7 @@ The supported models are:
 | `qwen3` | `Qwen/Qwen3-ASR-1.7B` | `Qwen3-ASR-1.7B` |
 | `canary` | `nvidia/canary-qwen-2.5b` | `canary-qwen-2.5b` |
 | `parakeet` | `nvidia/parakeet-tdt-0.6b-v3` | `parakeet-tdt-0.6b-v3` |
+| `parakeet1.1b` | `nvidia/parakeet-tdt-1.1b` | `parakeet-tdt-1.1b` |
 | `whisper` | `openai/whisper-large-v3` | `whisper-large-v3` |
 
 Models are loaded and unloaded one at a time. This is important because the GPU cannot hold several of these models simultaneously.
@@ -54,7 +55,7 @@ python transcribe.py "Italian\lecture-01.mp4" --models whisper
 python transcribe.py "Italian" --models all
 ```
 
-`--models` accepts one or more of `qwen3`, `canary`, `parakeet`, and `whisper`. `all` selects all four. Use `python transcribe.py --list-models` to display the registry.
+`--models` accepts one or more of `qwen3`, `canary`, `parakeet`, `parakeet1.1b`, and `whisper`. `all` selects all five. `selected` selects `parakeet` and `qwen3` in that order. Group names must be used alone. Use `python transcribe.py --list-models` to display the registry. `parakeet1.1b` is English-only.
 
 The input behavior is:
 
