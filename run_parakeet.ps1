@@ -22,3 +22,18 @@ foreach ($folder in $folders) {
         throw "Transcription failed for: $folder"
     }
 }
+
+# Successful transcripts no longer need their resumable chunk caches.
+$repositoryRoot = [System.IO.Path]::GetFullPath($PSScriptRoot).TrimEnd('\')
+$repositoryPrefix = $repositoryRoot + '\'
+$cacheDirectories = @(Get-ChildItem -LiteralPath $repositoryRoot -Directory -Filter ".asr-cache" -Recurse -Force)
+
+foreach ($cacheDirectory in $cacheDirectories) {
+    $resolvedCache = [System.IO.Path]::GetFullPath($cacheDirectory.FullName).TrimEnd('\')
+    if (-not $resolvedCache.StartsWith($repositoryPrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "Refusing to remove cache outside the repository: $resolvedCache"
+    }
+
+    Write-Host "Removing ASR cache: $resolvedCache" -ForegroundColor DarkGray
+    Remove-Item -LiteralPath $resolvedCache -Recurse -Force
+}

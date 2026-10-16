@@ -1,4 +1,5 @@
 .venv/
+.env
 __pycache__/
 .pytest_cache/
 *.py[cod]
@@ -25,6 +26,8 @@ transcription_status.csv
 # Model weights and local caches
 .cache/
 .asr-cache/
+.lecture-agent-cache/
+output/
 *.nemo
 *.safetensors
 

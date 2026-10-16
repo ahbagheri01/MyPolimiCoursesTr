@@ -94,3 +94,32 @@ Interrupted lectures resume from saved chunk transcripts in the course's local `
 - Canary uses its SALM loader and caps chunks at 30 seconds, including when running `--models all`.
 - Models are loaded and released sequentially. Do not run multiple copies against the same GPU or ledger.
 - The Whisper loader reads normalized WAV chunks directly with `soundfile`, so a system-wide FFmpeg installation is unnecessary.
+
+## Lecture analysis agent
+
+The `src` package compares one or more ASR transcripts for each lecture with mapped
+PDFs, notebooks, and text/code materials. It performs candidate extraction, semantic
+material comparison, and a second-pass coverage audit before writing concise Markdown.
+
+Install its lightweight dependencies separately from the GPU transcription stack:
+
+```powershell
+python -m pip install -r requirements-agent.txt
+```
+
+Copy `src/course.example.yaml`, update the transcript/material paths and model, then run:
+
+```powershell
+python src/main.py --config course.yaml
+python src/main.py --config course.yaml --lecture lecture_03
+```
+
+Transcript paths normally follow `<course>/transcript/<ASR model>/<lecture>.txt`. The
+course folder can be supplied with `course:` in YAML or inferred from that structure.
+The agent creates `<course>/notes/` automatically and writes each lecture note plus that
+course's `INDEX.md` there. The API key is read from `OPENROUTERAPIKEY` in `.env` by
+default. Extracted material and internal evidence audits are cached in
+`.lecture-agent-cache`.
+
+Every lecture entry must contain `status: INCOMPLETE` or `status: COMPLETE`. Completed
+lectures are skipped, including when selected explicitly with `--lecture`.
