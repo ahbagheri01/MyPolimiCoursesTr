@@ -23,9 +23,10 @@ class LLMClient:
             raise RuntimeError("Set llm.model in YAML or LECTURE_AGENT_MODEL in the environment")
         self.model = str(model)
         self.temperature = float(settings.get("temperature", 0.1))
-        self.max_tokens = int(settings.get("max_tokens", 8_000))
-        if self.max_tokens < 1:
-            raise RuntimeError("llm.max_tokens must be a positive integer")
+        configured_max_tokens = settings.get("max_tokens")
+        self.max_tokens = int(configured_max_tokens) if configured_max_tokens is not None else None
+        if self.max_tokens is not None and self.max_tokens < 1:
+            raise RuntimeError("llm.max_tokens must be a positive integer when specified")
         self.reasoning = settings.get("reasoning")
         self.provider = settings.get("provider")
         self.pdf_engine = settings.get("pdf_engine")
@@ -62,10 +63,11 @@ class LLMClient:
             request: dict[str, Any] = {
                 "model": self.model,
                 "temperature": self.temperature,
-                "max_tokens": self.max_tokens,
                 "response_format": {"type": "json_object"},
                 "messages": [{"role": "system", "content": system}, {"role": "user", "content": user_content}],
             }
+            if self.max_tokens is not None:
+                request["max_tokens"] = self.max_tokens
             if provider_options:
                 request["extra_body"] = provider_options
             response = self.client.chat.completions.create(**request)

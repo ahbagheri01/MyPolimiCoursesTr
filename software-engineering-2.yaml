@@ -1,0 +1,101 @@
+llm:
+  model: google/gemini-3.8-flash
+  base_url: https://openrouter.ai/api/v1
+  api_key_env: OPENROUTERAPIKEY
+  temperature: 0.1
+  pdf_engine: native
+  reasoning:
+    effort: minimal
+    exclude: true
+
+cache_dir: .lecture-agent-cache
+
+workflow:
+  # Zero means unlimited: preserve the complete transcripts and materials.
+  transcript_chunk_chars: 0
+  material_max_chars: 0
+  review_transcript_max_chars: 0
+  candidate_batch_size: 20
+
+lectures:
+  - id: SE2-20260916-CourseIntroduction-And-SoftwareEngineering
+    status: COMPLETE
+    course: SOFTW2
+    transcripts:
+      - "SOFTW2/transcript/parakeet-tdt-0.6b-v3/Software Engineering 2 20260916.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\00.CourseIntro.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\01.IntroSE.pdf'
+
+  - id: SE2-20260917-SoftwareLifecycle-And-IntroductionToRE
+    status: COMPLETE
+    course: SOFTW2
+    transcripts:
+      - "SOFTW2/transcript/parakeet-tdt-0.6b-v3/Software Engineering 2 20260917.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\01.IntroSE.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\02a.RE.pdf'
+
+  - id: SE2-20260923-WorldMachine-Turnstile-And-Airbus
+    status: COMPLETE
+    course: SOFTW2
+    transcripts:
+      - "SOFTW2/transcript/parakeet-tdt-0.6b-v3/Software Engineering 2 20260923.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\02a.RE.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\02c.ExampleScenarioUCReqs.pdf'
+
+  - id: SE2-20260924-RequirementsElicitation-And-UML
+    status: COMPLETE
+    course: SOFTW2
+    transcripts:
+      - "SOFTW2/transcript/parakeet-tdt-0.6b-v3/Software Engineering 2 20260924.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\02b.video1_ElicitationOfRequirements.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\02c.ExampleScenarioUCReqs.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\02d.video2_ModelingReqs.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\02e.UML4RE.pdf'
+
+  # The 30/09/2026 recording failed; the course links this 02/10/2025 recording instead.
+  - id: SE2-20260930-PreviousYearRecording-UML-And-AlloyPart1
+    status: COMPLETE
+    course: SOFTW2
+    transcripts:
+      - "SOFTW2/transcript/parakeet-tdt-0.6b-v3/SE2 20251002.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\02e.UML4RE.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\03a.AlloyPart1-2.pdf'
+
+  - id: SE2-20261007-AlloyPart2
+    status: COMPLETE
+    course: SOFTW2
+    transcripts:
+      - "SOFTW2/transcript/parakeet-tdt-0.6b-v3/Software Engineering 2 20261007.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\03a.AlloyPart1-2.pdf'
+
+  - id: SE2-20261008-AlloyPart3
+    status: COMPLETE
+    course: SOFTW2
+    transcripts:
+      - "SOFTW2/transcript/parakeet-tdt-0.6b-v3/Software Engineering 2 20261008.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\03a.AlloyPart1-2.pdf'
+
+  - id: SE2-20261014-AlloyExercises
+    status: COMPLETE
+    course: SOFTW2
+    transcripts:
+      - "SOFTW2/transcript/parakeet-tdt-0.6b-v3/Software Engineering 2 20261014.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\03a.AlloyPart1-2.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\03b.AlloyExercises.pdf'
+
+  - id: SE2-20261015-RASD-And-AlloyExercises
+    status: COMPLETE
+    course: SOFTW2
+    transcripts:
+      - "SOFTW2/transcript/parakeet-tdt-0.6b-v3/Software Engineering 2 20261015.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\02g.CreatingRASD.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\03b.AlloyExercises.pdf'
