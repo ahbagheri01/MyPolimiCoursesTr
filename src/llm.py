@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import base64
 from pathlib import Path
 from typing import Any
@@ -94,11 +95,16 @@ class LLMClient:
         try:
             value = json.loads(content)
         except json.JSONDecodeError as exc:
-            finish_reason = response.choices[0].finish_reason
-            raise RuntimeError(
-                f"The model returned invalid JSON ({len(content)} characters, "
-                f"finish_reason={finish_reason!r}): {exc}"
-            ) from exc
+            # Models sometimes emit raw backslashes (LaTeX, paths); escape the invalid ones and retry.
+            repaired = re.sub(r'\\(?!["\\/bfnrt]|u[0-9a-fA-F]{4})', r"\\\\", content)
+            try:
+                value = json.loads(repaired)
+            except json.JSONDecodeError:
+                finish_reason = response.choices[0].finish_reason
+                raise RuntimeError(
+                    f"The model returned invalid JSON ({len(content)} characters, "
+                    f"finish_reason={finish_reason!r}): {exc}"
+                ) from exc
         if not isinstance(value, dict):
             raise RuntimeError("The model response must be a JSON object")
         return value

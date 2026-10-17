@@ -1,0 +1,102 @@
+llm:
+  model: google/gemini-3.8-flash
+  base_url: https://openrouter.ai/api/v1
+  api_key_env: OPENROUTERAPIKEY
+  temperature: 0.1
+  max_tokens: 24000
+  # Forward each mapped PDF file directly to the model.
+  pdf_engine: native
+  reasoning:
+    effort: minimal
+    exclude: true
+
+cache_dir: .lecture-agent-cache
+
+workflow:
+  # Zero means unlimited: send each lecture transcript and its mapped materials in full.
+  transcript_chunk_chars: 0
+  material_max_chars: 0
+  review_transcript_max_chars: 0
+  candidate_batch_size: 20
+
+lectures:
+  # 15/09 - Presentation of the course, introduction to Big Data (Brambilla)
+  - id: SMBUD01-20260915-CourseIntroduction-BigData
+    status: COMPLETE
+    course: SMBUD
+    transcripts:
+      - "SMBUD/transcript/parakeet-tdt-0.6b-v3/SMBUD01-Marco Brambilla PoliMi-20260915 1410-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-00-intro_course.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-01-bigdata.pdf'
+
+  # 17/09 - Relational recap (ER, SQL), then schema and transactions begin
+  - id: SMBUD02-20260917-RelationalDBs-SchemaTransactions
+    status: COMPLETE
+    course: SMBUD
+    transcripts:
+      - "SMBUD/transcript/parakeet-tdt-0.6b-v3/SMBUD02-Marco Brambilla PoliMi-20260917 1546-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-03-ER-Relational.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-04-data-architectures.pdf'
+
+  # 22/09 - Rest of data architectures (partitioning, replication, ingestion), then towards big data / CAP
+  - id: SMBUD03-20260922-DataArchitectures-TowardsBigData
+    status: COMPLETE
+    course: SMBUD
+    transcripts:
+      - "SMBUD/transcript/parakeet-tdt-0.6b-v3/SMBUD03-Marco Brambilla PoliMi-20260922 1407-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-04-data-architectures.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-05-nosql.pdf'
+
+  # 24/09 - Wrap up NoSQL introduction (ACID/BASE, NoSQL families), start of graph databases
+  - id: SMBUD04-20260924-NoSQL-StartGraphDB
+    status: COMPLETE
+    course: SMBUD
+    transcripts:
+      - "SMBUD/transcript/parakeet-tdt-0.6b-v3/SMBUD04-Marco Brambilla PoliMi-20260924 1611-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-05-nosql.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-06-graphDB-neo4j.pdf'
+
+  # 06/10 - Graph databases and Neo4j / Cypher
+  - id: SMBUD05-20261006-GraphDB-Neo4j
+    status: COMPLETE
+    course: SMBUD
+    transcripts:
+      - "SMBUD/transcript/parakeet-tdt-0.6b-v3/SMBUD05-Marco Brambilla PoliMi-20261006 1410-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-06-graphDB-neo4j.pdf'
+
+  # 13/10 - Wrap up graph databases, introduction to document DBs (JSON) leading into MongoDB
+  - id: SMBUD06-20261013-GraphDB-Wrapup-DocumentDB
+    status: COMPLETE
+    course: SMBUD
+    transcripts:
+      - "SMBUD/transcript/parakeet-tdt-0.6b-v3/SMBUD06-Marco Brambilla PoliMi-20261013 1405-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-06-graphDB-neo4j.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-07-document-db.pdf'
+
+  # 08/10 - Exercise session (Ettori): Neo4j and Cypher introduction
+  - id: SMBUD-Ex-20261008-Neo4j-Introduction
+    status: COMPLETE
+    course: SMBUD
+    transcripts:
+      - "SMBUD/transcript/parakeet-tdt-0.6b-v3/Neo4J_introduction_Ettori_08-10-2026.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E02 - Neo4j\E02 - Neo4j.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E02 - Neo4j\E02 - Neo4j Sandbox Setup Guide.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-06-graphDB-neo4j.pdf'
+
+  # 15/10 - Exercise session (Tocchetti / Ettori): Neo4j exercises and Raphtory
+  - id: SMBUD-Ex-20261015-Neo4j-Practice-Raphtory
+    status: COMPLETE
+    course: SMBUD
+    transcripts:
+      - "SMBUD/transcript/parakeet-tdt-0.6b-v3/Neo4J_practice_and_raphtory_Ettori_15-10-2026.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E02 - Neo4j\E02 - Neo4j Exercises.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E02 - Neo4j\E02 Extra - Introduction to Raphtory.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E02 - Neo4j\E02 - Neo4j.pdf'
