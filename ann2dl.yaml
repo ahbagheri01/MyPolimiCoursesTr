@@ -1,0 +1,106 @@
+llm:
+  model: google/gemini-3.8-flash
+  base_url: https://openrouter.ai/api/v1
+  api_key_env: OPENROUTERAPIKEY
+  temperature: 0.1
+  max_tokens: 24000
+  # Forward each mapped PDF file directly to the model.
+  pdf_engine: native
+  reasoning:
+    effort: minimal
+    exclude: true
+
+cache_dir: .lecture-agent-cache
+
+workflow:
+  # Zero means unlimited: send each lecture transcript and its mapped materials in full.
+  transcript_chunk_chars: 0
+  material_max_chars: 0
+  review_transcript_max_chars: 0
+  candidate_batch_size: 20
+
+lectures:
+  # 16/09 - Course intro, Machine Learning vs Deep Learning (Matteucci)
+  - id: ANN2DL-20260916-Intro-DeepLearning
+    status: COMPLETE
+    course: ANN2DL
+    transcripts:
+      - "ANN2DL/transcript/parakeet-tdt-0.6b-v3/Matteo Matteucci's Personal Room-20260916 1645-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\ANN2DL\00 - AN2DL Intro (TENTATIVE).pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\ANN2DL\01 - DeepLearningIntro.pdf'
+
+  # 17/09 - Deep learning intro (rest), from perceptron to multilayer perceptron
+  - id: ANN2DL-20260917-DeepLearning-Perceptron
+    status: COMPLETE
+    course: ANN2DL
+    transcripts:
+      - "ANN2DL/transcript/parakeet-tdt-0.6b-v3/Matteo Matteucci's Personal Room-20260917 1415-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\ANN2DL\01 - DeepLearningIntro.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\ANN2DL\02 - Perceptron2NeuralNetworks.pdf'
+
+  # 23/09 - Grading logistics, feed-forward networks, training and error functions
+  - id: ANN2DL-20260923-FeedForward-ErrorFunctions
+    status: COMPLETE
+    course: ANN2DL
+    transcripts:
+      - "ANN2DL/transcript/parakeet-tdt-0.6b-v3/Matteo Matteucci's Personal Room-20260923 1623-2.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\ANN2DL\02 - Perceptron2NeuralNetworks.pdf'
+
+  # 24/09 - Backpropagation derivatives and loss functions
+  - id: ANN2DL-20260924-Backpropagation-LossFunctions
+    status: COMPLETE
+    course: ANN2DL
+    transcripts:
+      - "ANN2DL/transcript/parakeet-tdt-0.6b-v3/Matteo Matteucci's Personal Room-20260924 1419-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\ANN2DL\02 - Perceptron2NeuralNetworks.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\ANN2DL\03 - NeuralNetworksTraining.pdf'
+
+  # 30/09 - Training, overfitting, regularization, early stopping
+  - id: ANN2DL-20260930-Training-Overfitting
+    status: COMPLETE
+    course: ANN2DL
+    transcripts:
+      - "ANN2DL/transcript/parakeet-tdt-0.6b-v3/Matteo Matteucci's Personal Room-20260930 1617-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\ANN2DL\03 - NeuralNetworksTraining.pdf'
+
+  # 01/10 - Overfitting prevention, dropout, tips and tricks, optimizers
+  - id: ANN2DL-20261001-Overfitting-Dropout-TipsAndTricks
+    status: COMPLETE
+    course: ANN2DL
+    transcripts:
+      - "ANN2DL/transcript/parakeet-tdt-0.6b-v3/Matteo Matteucci's Personal Room-20261001 1421-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\ANN2DL\03 - NeuralNetworksTraining.pdf'
+
+  # Lab sessions (Lomurno / Archetti), mapped to the lab notebooks.
+  # 07/10 - Exercise session 1 (Lomurno), data handling and missing data
+  - id: ANN2DL-Lab-20261007-Session1-Lomurno
+    status: COMPLETE
+    course: ANN2DL
+    transcripts:
+      - "ANN2DL/transcript/parakeet-tdt-0.6b-v3/Eugenio Lomurno's Personal Room-20261007 1601-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\ANN2DL\Lecture 1\Feedforward Neural Networks.ipynb'
+
+  # 08/10 - Exercise session 2 (Archetti)
+  - id: ANN2DL-Lab-20261008-Session2-Archetti
+    status: COMPLETE
+    course: ANN2DL
+    transcripts:
+      - "ANN2DL/transcript/parakeet-tdt-0.6b-v3/Alberto Archetti's Personal Room-20261008 1413-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\ANN2DL\Lecture 2\Overfitting and Regularisation.ipynb'
+
+  # 14/10 - Exercise session 3 (Lomurno)
+  - id: ANN2DL-Lab-20261014-Session3-Lomurno
+    status: COMPLETE
+    course: ANN2DL
+    transcripts:
+      - "ANN2DL/transcript/parakeet-tdt-0.6b-v3/Eugenio Lomurno's Personal Room-20261014 1558-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\ANN2DL\Lecture 3\Cross Validation and Tuning.ipynb'

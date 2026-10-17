@@ -92,13 +92,15 @@ class LLMClient:
             content = content[first_newline + 1:] if first_newline >= 0 else content
             if content.endswith("```"):
                 content = content[:-3].rstrip()
+        decoder = json.JSONDecoder()
         try:
-            value = json.loads(content)
+            # raw_decode tolerates trailing text after the first complete JSON object.
+            value, _ = decoder.raw_decode(content)
         except json.JSONDecodeError as exc:
             # Models sometimes emit raw backslashes (LaTeX, paths); escape the invalid ones and retry.
             repaired = re.sub(r'\\(?!["\\/bfnrt]|u[0-9a-fA-F]{4})', r"\\\\", content)
             try:
-                value = json.loads(repaired)
+                value, _ = decoder.raw_decode(repaired)
             except json.JSONDecodeError:
                 finish_reason = response.choices[0].finish_reason
                 raise RuntimeError(
