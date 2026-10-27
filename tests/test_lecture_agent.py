@@ -8,7 +8,7 @@ from src.workflow import LectureWorkflow, write_course_indexes
 
 
 class FakeClient:
-    def json(self, system: str, prompt: str) -> dict:
+    def json(self, system: str, prompt: str, files: list | None = None) -> dict:
         if prompt.startswith("Stage 1"):
             return {"candidates": [{"topic": "Why scaling matters", "insight": "Large scales dominate distance.",
                 "evidence": "the large number dominates", "transcript_source": "qwen.txt",
