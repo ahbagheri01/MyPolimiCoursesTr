@@ -1,0 +1,92 @@
+llm:
+  model: google/gemini-3.8-flash
+  base_url: https://openrouter.ai/api/v1
+  api_key_env: OPENROUTERAPIKEY
+  temperature: 0.1
+  max_tokens: 24000
+  # Forward each mapped PDF file directly to the model.
+  pdf_engine: native
+  reasoning:
+    effort: minimal
+    exclude: true
+
+cache_dir: ../.lecture-agent-cache
+
+workflow:
+  # Zero means unlimited: send each lecture transcript and its mapped materials in full.
+  transcript_chunk_chars: 0
+  material_max_chars: 0
+  review_transcript_max_chars: 0
+  candidate_batch_size: 20
+
+# Mapping based on "Multi agents/Multiagent Systems 2026-2027 Schedule.pdf" (last update 23/09/2026).
+# Not recorded: 15/09 Introduction, 16/09 and 22/09 Agent architectures.
+lectures:
+  # 23/09 - Exercises on agent architectures (Amigoni)
+  - id: MAS-20260923-Exercises-AgentArchitectures
+    status: COMPLETE
+    course: .
+    transcripts:
+      - "transcript/parakeet-tdt-0.6b-v3/Francesco Amigoni's Personal Room-20260923 1417-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\Multi agents\Slides and notes-20261005\02 MAS agent architectures.pdf'
+
+  # 30/09 - Coalition formation, textbook Ch. 8 Sections 1-3 (Amigoni)
+  - id: MAS-20260930-CoalitionFormation-Part1
+    status: COMPLETE
+    course: .
+    transcripts:
+      - "transcript/parakeet-tdt-0.6b-v3/Francesco Amigoni's Personal Room-20260930 1405-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\Multi agents\Slides and notes-20261005\03 MAS coalition formation.pdf'
+
+  # 06/10 - Basics of game theory, textbook Ch. 17 (Gatti)
+  - id: MAS-20261006-GameTheory-Part1-Gatti
+    status: COMPLETE
+    course: .
+    transcripts:
+      - "transcript/parakeet-tdt-0.6b-v3/Nicola Gatti's Personal Room-20261006 0806-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\Multi agents\Slides and notes-20261005\Notes on game theory (by prof. Nicola Gatti).pdf'
+
+  # 07/10 - Coalition formation, Ch. 8 Section 5: distributed coalition structure algorithm (Amigoni)
+  - id: MAS-20261007-CoalitionFormation-Part2
+    status: COMPLETE
+    course: .
+    transcripts:
+      - "transcript/parakeet-tdt-0.6b-v3/Francesco Amigoni's Personal Room-20261007 1400-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\Multi agents\Slides and notes-20261005\03 MAS coalition formation.pdf'
+
+  # 13/10 - Basics of game theory, part 2 (Gatti)
+  - id: MAS-20261013-GameTheory-Part2-Gatti
+    status: COMPLETE
+    course: .
+    transcripts:
+      - "transcript/parakeet-tdt-0.6b-v3/Nicola Gatti's Personal Room-20261013 0810-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\Multi agents\Slides and notes-20261005\Notes on game theory (by prof. Nicola Gatti).pdf'
+
+  # 14/10 - Exercises on game theory (Amigoni)
+  - id: MAS-20261014-Exercises-GameTheory
+    status: COMPLETE
+    course: .
+    transcripts:
+      - "transcript/parakeet-tdt-0.6b-v3/Francesco Amigoni's Personal Room-20261014 1407-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\Multi agents\Slides and notes-20261005\Notes on game theory (by prof. Nicola Gatti).pdf'
+
+  # 20/10 - Exercises on coalition formation (Amigoni)
+  - id: MAS-20261020-Exercises-CoalitionFormation
+    status: COMPLETE
+    course: .
+    transcripts:
+      - "transcript/parakeet-tdt-0.6b-v3/Francesco Amigoni's Personal Room-20261020 0753-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\Multi agents\Slides and notes-20261005\03 MAS coalition formation.pdf'
+
+  # Transcribed but waiting for the professor's slides (not downloaded yet):
+  # 27/10 - Multiagent planning, Ch. 11 Sections 1-2 (Amigoni)
+  #   "Multi agents/transcript/parakeet-tdt-0.6b-v3/Francesco Amigoni's Personal Room-20261027 0856-1.txt"
+  # 28/10 - Multiagent planning, Ch. 11 Section 5 except 5.3 (Amigoni)
+  #   "Multi agents/transcript/parakeet-tdt-0.6b-v3/Francesco Amigoni's Personal Room-20261028 1502-1.txt"

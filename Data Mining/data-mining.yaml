@@ -10,7 +10,7 @@ llm:
     effort: minimal
     exclude: true
 
-cache_dir: .lecture-agent-cache
+cache_dir: ../.lecture-agent-cache
 
 workflow:
   # Zero means unlimited: send each lecture transcript and its mapped materials in full.
@@ -22,66 +22,66 @@ workflow:
 lectures:
   - id: DM2026-01-CourseIntroduction-DataMining
     status: COMPLETE
-    course: Data Mining
+    course: .
     transcripts:
-      - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-01-CourseIntroduction-DataMining.txt
+      - transcript/parakeet-tdt-0.6b-v3/DM2026-01-CourseIntroduction-DataMining.txt
     materials:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-00-CourseIntroduction.pdf'
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-01-DataMining.pdf'
 
   - id: DM2026-02-DataRepresentation
     status: COMPLETE
-    course: Data Mining
+    course: .
     transcripts:
-      - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-02-DataRepresentation.txt
+      - transcript/parakeet-tdt-0.6b-v3/DM2026-02-DataRepresentation.txt
     materials:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-02-DataRepresentation.pdf'
 
   - id: DM2026-03-AssociationRules
     status: COMPLETE
-    course: Data Mining
+    course: .
     transcripts:
-      - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-03-AssociationRules.txt
+      - transcript/parakeet-tdt-0.6b-v3/DM2026-03-AssociationRules.txt
     materials:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-04-AssociationRules.pdf'
 
   - id: DM2026-04-AssociationRules
     status: COMPLETE
-    course: Data Mining
+    course: .
     transcripts:
-      - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-04-AssociationRules.txt
+      - transcript/parakeet-tdt-0.6b-v3/DM2026-04-AssociationRules.txt
     materials:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-04-AssociationRules.pdf'
 
   - id: DM2026-05-Clustering
     status: COMPLETE
-    course: Data Mining
+    course: .
     transcripts:
-      - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-05-Clustering.txt
+      - transcript/parakeet-tdt-0.6b-v3/DM2026-05-Clustering.txt
     materials:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-05-Clustering.pdf'
 
   - id: DM2026-06-HierarchicalClusteringAndNotebooks
     status: COMPLETE
-    course: Data Mining
+    course: .
     transcripts:
-      - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-06-HierarchicalClusteringAndNotebooks.txt
+      - transcript/parakeet-tdt-0.6b-v3/DM2026-06-HierarchicalClusteringAndNotebooks.txt
     materials:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-06-HierarchicalClustering.pdf'
 
   - id: DM2026-07-RepresentationBasedClustering
     status: COMPLETE
-    course: Data Mining
+    course: .
     transcripts:
-      - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-07-RepresentationBasedClustering.txt
+      - transcript/parakeet-tdt-0.6b-v3/DM2026-07-RepresentationBasedClustering.txt
     materials:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-07-RepresentativeBasedClustering.pdf'
 
   - id: DM2026-08-DBScanNotebooksAndLinearRegression
     status: COMPLETE
-    course: Data Mining
+    course: .
     transcripts:
-      - Data Mining/transcript/parakeet-tdt-0.6b-v3/DM2026-08-DBScanNotebooksAndLinearRegression.txt
+      - transcript/parakeet-tdt-0.6b-v3/DM2026-08-DBScanNotebooksAndLinearRegression.txt
     materials:
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-08-DensityBasedClustering.pdf'
       - 'E:\amirhossein\Polimi\POLIMI\Data Mining\Syllabus-20260914\Slides\DM2026-2027-09-LinearRegression.pdf'

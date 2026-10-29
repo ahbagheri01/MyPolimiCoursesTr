@@ -30,7 +30,7 @@ Nothing here needs to be read in code to be used: everything is driven by `trans
 |---|---|
 | `transcribe.py` | Stage 1. GPU transcription CLI (five ASR models, resumable, hash ledger). |
 | `run_parakeet.ps1` | Convenience script: transcribes every course folder with Parakeet, then deletes `.asr-cache/` folders. |
-| `src/main.py` | Stage 2 entry point (`python src/main.py --config <course>.yaml`). |
+| `src/main.py` | Stage 2 entry point (`python src/main.py --config "<Course>/<course>.yaml"`). |
 | `src/workflow.py` | Stage 2 logic: extract, compare, review, render Markdown, write `INDEX.md`. |
 | `src/prompts.py` | The three LLM prompts (extract, compare, review) and the system prompt. |
 | `src/prompts.txt` | The longer natural-language specification the prompts were derived from. Documentation only; not read by code. |
@@ -38,7 +38,7 @@ Nothing here needs to be read in code to be used: everything is driven by `trans
 | `src/loaders.py` | Reads the YAML config, loads transcripts, extracts text from PDFs/notebooks (cached). |
 | `src/models.py` | Small dataclasses passed between stages. |
 | `tests/test_lecture_agent.py` | Unit tests for config loading, course inference and the workflow (uses a fake LLM, no network). |
-| `data-mining.yaml`, `software-engineering-2.yaml`, `smbud.yaml`, `ann2dl.yaml` | Per-course Stage 2 configs: lecture list, transcript paths, material paths, status flags. |
+| `<Course>/<course>.yaml` (e.g. `SMBUD/smbud.yaml`) | Per-course Stage 2 configs, one inside each course folder: lecture list, transcript paths, material paths, status flags. |
 | `instruction.md` | Detailed reference for Stage 1 (`transcribe.py`). |
 | `intrsutaanlysy.md` | The original specification of what a good note is (the "professor-only insights" brief). Historical; may be absent in your checkout. |
 | `requirements-gpu.txt` | Dependencies for Stage 1 (CUDA PyTorch, NeMo, Qwen-ASR, Whisper...). |
@@ -64,11 +64,11 @@ Slides, PDFs and notebooks live **outside** the repository (in `E:\amirhossein\P
 
 | Course folder | Recordings | Transcripts | Config | Notes |
 |---|---|---|---|---|
-| `Data Mining` | 9 mp3 | Parakeet (lectures 1-8) | `data-mining.yaml` | 8 lectures done (lecture 9 is not transcribed yet) |
-| `SOFTW2` (Software Engineering 2) | mp3 | Parakeet (+ others) | `software-engineering-2.yaml` | 9 lectures done |
-| `SMBUD` (Systems and Methods for Big and Unstructured Data) | 6 lectures + 2 Neo4j exercise sessions | Parakeet | `smbud.yaml` | 8 done |
-| `ANN2DL` (Artificial Neural Networks and Deep Learning) | 6 theory lectures + 3 lab sessions | Parakeet (+ others for theory) | `ann2dl.yaml` | 9 done |
-| `Multi agents` | 6 mp4 | Parakeet | none yet | not started |
+| `Data Mining` | 9 mp3 | Parakeet (lectures 1-8) | `Data Mining/data-mining.yaml` | 8 lectures done (lecture 9 is not transcribed yet) |
+| `SOFTW2` (Software Engineering 2) | mp3 | Parakeet (+ others) | `SOFTW2/software-engineering-2.yaml` | 9 lectures done |
+| `SMBUD` (Systems and Methods for Big and Unstructured Data) | 6 lectures + 5 exercise sessions (ER, Neo4j, Raphtory) | Parakeet | `SMBUD/smbud.yaml` | 11 done |
+| `ANN2DL` (Artificial Neural Networks and Deep Learning) | 6 theory lectures + 3 lab sessions | Parakeet (+ others for theory) | `ANN2DL/ann2dl.yaml` | 9 done |
+| `Multi agents` | 6 mp4 | Parakeet | `Multi agents/multi-agents.yaml` | not started |
 | `TCS` | none committed | none | none | not started |
 
 ---
@@ -133,8 +133,8 @@ More detail in [instruction.md](instruction.md).
 ### Running it
 
 ```powershell
-python src/main.py --config ann2dl.yaml                      # all INCOMPLETE lectures
-python src/main.py --config ann2dl.yaml --lecture <lecture-id>
+python src/main.py --config ANN2DL/ann2dl.yaml                      # all INCOMPLETE lectures
+python src/main.py --config ANN2DL/ann2dl.yaml --lecture <lecture-id>
 ```
 
 Only lectures marked `status: INCOMPLETE` are processed. `COMPLETE` lectures are skipped, **even if you pass them with `--lecture`**. Progress is printed per lecture; the run stops at the first error.
@@ -166,7 +166,7 @@ If a mapped material is missing or unreadable, a "Material limitations" line is 
 
 ### The YAML config
 
-One file per course. Minimal example:
+One file per course, stored inside the course folder (e.g. `ANN2DL/ann2dl.yaml`). Minimal example:
 
 ```yaml
 llm:
@@ -178,7 +178,7 @@ llm:
   pdf_engine: native                    # send PDFs straight to the model
   reasoning: {effort: minimal, exclude: true}   # optional, provider-specific
 
-cache_dir: .lecture-agent-cache
+cache_dir: ../.lecture-agent-cache      # relative to the YAML, i.e. the repo-root cache
 
 workflow:                               # 0 = unlimited (send everything in full)
   transcript_chunk_chars: 0
@@ -189,9 +189,9 @@ workflow:                               # 0 = unlimited (send everything in full
 lectures:
   - id: ANN2DL-20260924-Backpropagation-LossFunctions   # unique; also the note filename
     status: INCOMPLETE                  # INCOMPLETE = will run, COMPLETE = skipped
-    course: ANN2DL                      # course folder (notes go to <course>/notes/)
+    course: .                           # course folder relative to the YAML (notes go to <course>/notes/)
     transcripts:                        # one or more ASR versions of the SAME lecture
-      - "ANN2DL/transcript/parakeet-tdt-0.6b-v3/<recording>.txt"
+      - "transcript/parakeet-tdt-0.6b-v3/<recording>.txt"
     materials:                          # PDFs, notebooks, text files, or whole directories
       - 'E:\amirhossein\Polimi\POLIMI\ANN2DL\02 - Perceptron2NeuralNetworks.pdf'
       - 'E:\amirhossein\Polimi\POLIMI\ANN2DL\03 - NeuralNetworksTraining.pdf'
@@ -207,8 +207,8 @@ Rules: relative paths are relative to the YAML file; every lecture needs `id`, `
 2. Transcribe: `python transcribe.py "<Course>" --models parakeet`.
 3. Collect the slides/notebooks somewhere and note their absolute paths.
 4. **Map each recording to its materials.** Use the course schedule for dates and topics, then confirm by reading the start and end of each transcript (the professor usually recaps and previews). Lectures often span two decks; map both. Lab/exercise recordings map to their notebooks or exercise PDFs.
-5. Copy an existing YAML (e.g. `smbud.yaml`) to `<course>.yaml`, edit the lecture list, set every lecture `INCOMPLETE`.
-6. Run `python src/main.py --config <course>.yaml`.
+5. Copy an existing YAML (e.g. `SMBUD/smbud.yaml`) to `<Course>/<course>.yaml`, edit the lecture list, set every lecture `INCOMPLETE`. Keep transcript paths relative to the course folder (`transcript/...`), `course: .` and `cache_dir: ../.lecture-agent-cache`.
+6. Run `python src/main.py --config "<Course>/<course>.yaml"`.
 7. Read the output in `<Course>/notes/`, spot-check a couple of notes against the transcript, and set finished lectures to `COMPLETE`.
 8. Commit the notes, the YAML and the transcripts (recordings are git-ignored).
 

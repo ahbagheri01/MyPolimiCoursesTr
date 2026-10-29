@@ -10,7 +10,7 @@ llm:
     effort: minimal
     exclude: true
 
-cache_dir: .lecture-agent-cache
+cache_dir: ../.lecture-agent-cache
 
 workflow:
   # Zero means unlimited: send each lecture transcript and its mapped materials in full.
@@ -23,9 +23,9 @@ lectures:
   # 15/09 - Presentation of the course, introduction to Big Data (Brambilla)
   - id: SMBUD01-20260915-CourseIntroduction-BigData
     status: COMPLETE
-    course: SMBUD
+    course: .
     transcripts:
-      - "SMBUD/transcript/parakeet-tdt-0.6b-v3/SMBUD01-Marco Brambilla PoliMi-20260915 1410-1.txt"
+      - "transcript/parakeet-tdt-0.6b-v3/SMBUD01-Marco Brambilla PoliMi-20260915 1410-1.txt"
     materials:
       - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-00-intro_course.pdf'
       - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-01-bigdata.pdf'
@@ -33,19 +33,20 @@ lectures:
   # 17/09 - Relational recap (ER, SQL), then schema and transactions begin
   - id: SMBUD02-20260917-RelationalDBs-SchemaTransactions
     status: COMPLETE
-    course: SMBUD
+    course: .
     transcripts:
-      - "SMBUD/transcript/parakeet-tdt-0.6b-v3/SMBUD02-Marco Brambilla PoliMi-20260917 1546-1.txt"
+      - "transcript/parakeet-tdt-0.6b-v3/SMBUD02-Marco Brambilla PoliMi-20260917 1546-1.txt"
     materials:
       - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-03-ER-Relational.pdf'
       - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-04-data-architectures.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-05-nosql.pdf'
 
   # 22/09 - Rest of data architectures (partitioning, replication, ingestion), then towards big data / CAP
   - id: SMBUD03-20260922-DataArchitectures-TowardsBigData
     status: COMPLETE
-    course: SMBUD
+    course: .
     transcripts:
-      - "SMBUD/transcript/parakeet-tdt-0.6b-v3/SMBUD03-Marco Brambilla PoliMi-20260922 1407-1.txt"
+      - "transcript/parakeet-tdt-0.6b-v3/SMBUD03-Marco Brambilla PoliMi-20260922 1407-1.txt"
     materials:
       - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-04-data-architectures.pdf'
       - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-05-nosql.pdf'
@@ -53,9 +54,9 @@ lectures:
   # 24/09 - Wrap up NoSQL introduction (ACID/BASE, NoSQL families), start of graph databases
   - id: SMBUD04-20260924-NoSQL-StartGraphDB
     status: COMPLETE
-    course: SMBUD
+    course: .
     transcripts:
-      - "SMBUD/transcript/parakeet-tdt-0.6b-v3/SMBUD04-Marco Brambilla PoliMi-20260924 1611-1.txt"
+      - "transcript/parakeet-tdt-0.6b-v3/SMBUD04-Marco Brambilla PoliMi-20260924 1611-1.txt"
     materials:
       - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-05-nosql.pdf'
       - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-06-graphDB-neo4j.pdf'
@@ -63,18 +64,18 @@ lectures:
   # 06/10 - Graph databases and Neo4j / Cypher
   - id: SMBUD05-20261006-GraphDB-Neo4j
     status: COMPLETE
-    course: SMBUD
+    course: .
     transcripts:
-      - "SMBUD/transcript/parakeet-tdt-0.6b-v3/SMBUD05-Marco Brambilla PoliMi-20261006 1410-1.txt"
+      - "transcript/parakeet-tdt-0.6b-v3/SMBUD05-Marco Brambilla PoliMi-20261006 1410-1.txt"
     materials:
       - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-06-graphDB-neo4j.pdf'
 
   # 13/10 - Wrap up graph databases, introduction to document DBs (JSON) leading into MongoDB
   - id: SMBUD06-20261013-GraphDB-Wrapup-DocumentDB
     status: COMPLETE
-    course: SMBUD
+    course: .
     transcripts:
-      - "SMBUD/transcript/parakeet-tdt-0.6b-v3/SMBUD06-Marco Brambilla PoliMi-20261013 1405-1.txt"
+      - "transcript/parakeet-tdt-0.6b-v3/SMBUD06-Marco Brambilla PoliMi-20261013 1405-1.txt"
     materials:
       - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-06-graphDB-neo4j.pdf'
       - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-07-document-db.pdf'
@@ -82,9 +83,9 @@ lectures:
   # 08/10 - Exercise session (Ettori): Neo4j and Cypher introduction
   - id: SMBUD-Ex-20261008-Neo4j-Introduction
     status: COMPLETE
-    course: SMBUD
+    course: .
     transcripts:
-      - "SMBUD/transcript/parakeet-tdt-0.6b-v3/Neo4J_introduction_Ettori_08-10-2026.txt"
+      - "transcript/parakeet-tdt-0.6b-v3/Neo4J_introduction_Ettori_08-10-2026.txt"
     materials:
       - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E02 - Neo4j\E02 - Neo4j.pdf'
       - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E02 - Neo4j\E02 - Neo4j Sandbox Setup Guide.pdf'
@@ -93,10 +94,39 @@ lectures:
   # 15/10 - Exercise session (Tocchetti / Ettori): Neo4j exercises and Raphtory
   - id: SMBUD-Ex-20261015-Neo4j-Practice-Raphtory
     status: COMPLETE
-    course: SMBUD
+    course: .
     transcripts:
-      - "SMBUD/transcript/parakeet-tdt-0.6b-v3/Neo4J_practice_and_raphtory_Ettori_15-10-2026.txt"
+      - "transcript/parakeet-tdt-0.6b-v3/Neo4J_practice_and_raphtory_Ettori_15-10-2026.txt"
     materials:
       - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E02 - Neo4j\E02 - Neo4j Exercises.pdf'
       - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E02 - Neo4j\E02 Extra - Introduction to Raphtory.pdf'
       - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E02 - Neo4j\E02 - Neo4j.pdf'
+
+  # 01/10 - Exercise session (Tocchetti): ER modeling
+  - id: SMBUD-Ex-20261001-ER-Modeling-Tocchetti
+    status: COMPLETE
+    course: .
+    transcripts:
+      - "transcript/parakeet-tdt-0.6b-v3/Andrea Tocchetti's Personal Room-20261001 1551-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E01 - ER [A-N].pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\Exercise Sessions - Introduction [A-N].pdf'
+
+  # 06/10 - Exercise session (Tocchetti): Neo4j and Cypher
+  - id: SMBUD-Ex-20261006-Neo4j-Cypher-Tocchetti
+    status: COMPLETE
+    course: .
+    transcripts:
+      - "transcript/parakeet-tdt-0.6b-v3/Andrea Tocchetti's Personal Room-20261006 1603-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E02 - Neo4j\E02 - Neo4j.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E02 - Neo4j\E02 - Neo4j Sandbox Setup Guide.pdf'
+
+  # 15/10 - Exercise session (Tocchetti): Raphtory and temporal graphs (recording starts mid-session)
+  - id: SMBUD-Ex-20261015-Raphtory-Tocchetti
+    status: COMPLETE
+    course: .
+    transcripts:
+      - "transcript/parakeet-tdt-0.6b-v3/Andrea Tocchetti's Personal Room-20261015 1602-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E02 - Neo4j\E02 Extra - Introduction to Raphtory.pdf'

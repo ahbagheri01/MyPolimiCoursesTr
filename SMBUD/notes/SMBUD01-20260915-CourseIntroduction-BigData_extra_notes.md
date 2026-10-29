@@ -3,80 +3,193 @@
 **Transcripts:** SMBUD01-Marco Brambilla PoliMi-20260915 1410-1.txt
 **Materials:** E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-00-intro_course.pdf, E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-01-bigdata.pdf
 
-## Course Email Labeling Requirement and Research Lab Context
+> **Coverage notes:** The lecture ended with the Netflix conclusion slide (SMBUD-01 p.56). The "Big Data = Big Problems?", "Notice anything?" and "Problems" slides (p.57–59) were left for the next lecture: as homework, students should look at their Netflix/Prime Video catalogue and see whether they notice anything weird. The professor said it would be part of the "next examination", which is probably an ASR error for "next explanation" (uncertain). The hype cycle, AI market, "collect/analyse/build value" and "cleanse vs. analyse as is" slides were shown with little or no spoken comment.
 
-**Reference:** SMBUD-00-intro_course.pdf, slide 2
+## SQL Is a Prerequisite, and "When to Use What" Is the Core Skill
 
-All email correspondence with the teaching team must include the exact tag '[SMBUD]' in the subject line to prevent emails from being lost among high volumes of messages. Routine theory questions should be directed to the instructor, practical questions to the teaching assistants (Andrea Tocchetti and Davide Ettori), and administrative/exam queries to both simultaneously. Professor Brambilla also leads the Data Science Lab at DEIB, offering future thesis opportunities in data science, AI, machine learning, explainable AI, and big data.
+**Reference:** SMBUD-00-intro_course.pdf p.3–6
 
-## Detailed Exam Structure, Browser Constraints, and Continuous Evaluation
+- This course is the "next chapter" after the bachelor database courses: moving from relational to non-relational databases. Knowing relational databases (ER model, relational model, SQL) is a requirement. "We will talk about NoSQL, but you need to know SQL." There will only be a very quick recap.
+- The professor called this the **most important part** of the course: being able to decide, from the problem, setting and scenario, which kind of database is best ("when to use what").
+- The catalogue covers 8 *kinds* of databases, not 8 databases. Each kind has its own products, data model, query language and design approach. Every kind gets a quick introduction, and only the most prominent/popular ones are covered in depth. For each approach at least one real product (commercial or open source) is named, and the course also looks inside the implementation (how scalability, distribution and reliability are guaranteed).
 
-**Reference:** SMBUD-00-intro_course.pdf, slide 9
+## Exam Format Details Not on the Evaluation Slide
 
-The written exam is conducted on the student's laptop using Safe Exam Browser, which does not run reliably on Linux (requiring students with Linux to borrow a Mac/Windows machine or request advance accommodations). The written test consists of two parts: a strict 10–12 minute closed-book theory quiz (6 points, multiple choice/true-false) that locks upon completion, immediately followed by a 2-hour practical section (24 points). The optional continuous evaluation program offers 3 intermediate tests during the course (one pass/fail threshold test each, worth +1 point each, bringing the total base mark potential to 33 points). Students scoring 29 or higher can optionally request a small practical project to achieve 30 or 30 cum laude. If proctors doubt authorship or integrity, an oral examination will be mandated.
+**Reference:** SMBUD-00-intro_course.pdf p.9
 
-## Cognitive Scale Distortion of Volume: The Intangibility and Money Analogy
+- **Written exam:** in presence, during the official exam sessions, split into theory and practice.
+  - Theory: closed questions (multiple choice / true–false). It is very short, about 10–12 minutes (about 15 minutes all included). The theory part is closed before you move on.
+  - Practice: exercises on the topics and technologies of the course, worth 24 points, about 2 hours.
+- **Format:** usually on your own laptop in a safe exam browser that only allows the exam website. On some calls it may be on paper for technical reasons, with the same kind of questions. Everything is closed book; you may bring only a thin, transparent pen. On exam day you sign explicit anti-cheating rules, and if you don't agree you leave.
+- **Laptop:** the safe browser does not work on Linux, so you need a Mac or Windows machine (borrowing one is fine). If you only have Linux, tell the instructors in advance. A test to run at home will be provided weeks before. On exam day the exam will **not** be stopped if your browser fails to open.
+- **Project (+1):** only if you already have ≥29 in the written part, to reach 30 / 30 cum laude. It can only be done after you have taken the practice exam at least once. It is fully optional.
+- **Intermediate tests (3 × 1 pt, "continuous evaluation"):** optional, in class on your laptop, closed-answer, **pass/fail** against a threshold (1 point or 0). If there are many students, they take it in groups (e.g. 300 → 3 groups of 100) with different questions per group. Dates will be announced later.
+- **Oral:** the instructors can require it ("force you") when they need more evidence. It comes after the written part and checks that you actually know what you wrote.
 
-**Reference:** SMBUD-01-bigdata.pdf, slide 5
+## No Single Textbook Covers the Course
 
-Humans fail to perceive the exponential severity of volume in big data because data is intangible (unlike physical objects or dirt piles). Brambilla uses a currency scaling analogy to demonstrate how rapid scale multiplication is: if 1 KB equals 1 Euro, then 1 MB is 1,000 Euros, 1 GB is 1 million Euros, 1 TB is 1 billion Euros, and 1 PB is 1 trillion Euros—a monetary threshold exceeding personal wealth. While storage up to terabytes is cheap or nearly free for consumers, organizational big data management costs escalate drastically at petabyte and exabyte scales.
+**Reference:** SMBUD-00-intro_course.pdf p.10–11
 
-## Ephemeral Streaming Data Loss vs. Real-Time Ingestion
+No single book covers all these topics. Kleppmann's book covers data-intensive application design but not everything. For the individual technologies you should also read their official documentation and online resources.
 
-**Reference:** SMBUD-01-bigdata.pdf, slide 7
+## Why Big Data Matters, and Why It Is Not Mainly About Size
 
-High-velocity streaming data from IoT devices, sensors, and smart monitors is often inherently transient: devices produce, transmit, and immediately delete raw readings. If ingestion and streaming analytics pipelines are not fast enough to process data in motion in real time, the raw observations are lost forever, leaving only pre-computed aggregates or completely missing critical signals.
+**Reference:** SMBUD-01-bigdata.pdf p.4
 
-## Veracity Degradation, Data Integration Hazards, and Data Cleaning Overhead
+- Motivation: big data is the foundation of everything innovative in computer science today. AI, machine learning and data science work only because big data sources exist.
+- Reading of the IBM survey (biggest customers, late 2000s when the idea emerged): the top answers were scope, new kinds of data/analysis and real-time; "large volumes" comes only near the bottom. Size is one complexity factor, but not the only one and probably not the most critical.
 
-**Reference:** SMBUD-01-bigdata.pdf, slide 8
+## Volume: Where "Big" Starts, and Why We Underestimate It
 
-Unlike historical corporate datasets that were tightly curated, modern big data suffers severe veracity issues due to uncontrolled external sources and integration errors (e.g., mismatches when joining disparate systems or aligning missing and real values). Consequently, industrial studies show that machine learning and data science experts spend 60% to 75% of their project time and budget merely cleaning tables, imputing missing/null values, and rectifying low-level numerical discrepancies rather than engineering models.
+**Reference:** SMBUD-01-bigdata.pdf p.5
 
-## Economic Virtuous Cycle of Storage/Network Costs and the Plateau Risk
+- Individual or consumer data is never "big": megabytes to terabytes, even a few hundred TB, is still small. Big data starts beyond the **petabyte** (exabytes and up), which is usually only reached by large organisations. Storing small amounts is almost free (a disk, a cheap cloud subscription). Storing and managing big data is still expensive, and the problems start from the exabyte level on.
+- **Money analogy for the ×1000 steps:** if I pay you 1 € per kilobyte, I owe 1,000 € per megabyte, 1 million € per gigabyte, 1 billion € per terabyte and 1 trillion € per petabyte. Nothing else in the real world grows across scales like this. Because data is intangible, we don't notice how much we "waste" when saving photos and videos.
 
-**Reference:** SMBUD-01-bigdata.pdf, slides 12-16
+## Variety Is Really Heterogeneity
 
-The big data explosion was driven by an economic cycle: logarithmic drops in storage ($600/GB in 1990 down to fractions of a cent) and bandwidth costs ($1,200/mo in 1999 down to ~€20 fiber) transformed user behavior (e.g., saving massive files, photos of food). This usage expanded consumer markets, attracting ad revenues and infrastructure investments. However, if data growth hits an empirical logistic plateau in 20–30 years, capital investments into faster processing hardware and technology development will stagnate.
+**Reference:** SMBUD-01-bigdata.pdf p.6
 
-## Market Layering Trade-offs: Cross-Infrastructure Vendor Lock-in vs. Open-Source TCO
+The correct technical term is **heterogeneity**: data differs in structure, format, type and storage standard. Traditional sources (banks, traditional companies) stored mostly numbers and a few strings. Processing video, audio or multimedia is dramatically different, and that is why dedicated tools, AI and machine learning are needed.
 
-**Reference:** SMBUD-01-bigdata.pdf, slides 32-33
+## Velocity: If You Are Too Slow, the Data Is Lost
 
-The big data market comprises three layers: infrastructure, analytics, and applications. Cross-infrastructure vendors (e.g., Microsoft Azure, AWS, Google Cloud) offer tight vertical integration across the entire stack, reducing development friction but creating severe vendor lock-in where migration costs mimic monopolistic entrapment. Conversely, open-source software (e.g., open versions of MongoDB, Redis, Neo4j) avoids licensing lock-in and provides source access, but is not financially 'free': it incurs substantial total cost of ownership (TCO) in hardware, operations, continuous maintenance, and skilled personnel compared to fully managed commercial cloud offerings.
+**Reference:** SMBUD-01-bigdata.pdf p.7
 
-## Perceived vs. Infrastructure Value: Twitter vs. VMware Acquisition Discrepancy
+Data is generated continuously by huge numbers of sources, and this continuous flow is what defines data streaming. Networks and systems must process data as fast as it is generated. With sensors, IoT and smart devices, much data is produced, transferred and then **immediately deleted**. You analyse it in real time, keep only the analytics/aggregations and throw away the raw data. If the system is too slow, you miss that data forever and lose the opportunity.
 
-**Reference:** SMBUD-01-bigdata.pdf, slides 32-33
+## Veracity = Data Quality, and It Is Worse Than in the Past
 
-Consumers and mainstream media only perceive the customer-facing application layer (e.g., Instagram, Twitter/X, ChatGPT), ignoring the foundational infrastructure and analytics layers. To illustrate this distortion, Brambilla contrasts Elon Musk's heavily publicized $44 billion acquisition of Twitter with the simultaneously occurring, higher-value ~$48+ billion acquisition of VMware (a virtualization/cloud distribution company unnoticed by the public despite powering the very enterprise infrastructure applications rely upon).
+**Reference:** SMBUD-01-bigdata.pdf p.8
 
-## Population Shifts: From Paper Surveys and Auditel Sampling to Continuous Full Monitoring
+- Veracity is essentially **data quality**: errors, noise, missing values and wrongly aggregated values, so the data cannot be trusted.
+- This is a step back from the past. Traditional internal company data was higher quality because companies kept it clean, organised and structured. Today data comes from many sources we have no control over, and with so many producers a mistake somewhere is very likely.
+- **Data integration** is itself a source of errors. When internal and external data are combined, it is easy to connect or match the wrong records, or match missing values with real data.
 
-**Reference:** SMBUD-01-bigdata.pdf, slides 20-22
+## Dirty Data Makes Models Learn a Wrong Reality
 
-Traditional statistics used sampling because processing the entire population was computationally and logistically impossible (e.g., sending supermarket pollsters for Barilla pasta to get 50–100 responses, or the Italian agency Auditel using 5,000 hardware-monitored household remote controls to estimate the viewing habits of 60 million people for the Sanremo music festival). In contrast, big data shifts from sample inference to capturing 100% of user activity via continuous stream analytics on platforms like Netflix.
+**Reference:** None (not in slides)
 
-## Bottom-Up Data Exploration vs. Scientific Method in Complex Domains
+AI, ML and LLMs are all built on data, so feeding them dirty data makes them "learn a wrong reality". Before thinking about models and optimisation, ask whether you have the data and whether its quality is good enough. If not, clean and prepare it first. The professor quoted industrial estimates that **60–75% of the cost** of ML/AI/data-science projects goes into data cleaning (removing nulls, fixing wrong digits in numbers…), even for top deep-learning experts.
 
-**Reference:** SMBUD-01-bigdata.pdf, slides 23-25
+## The Vs Become Requirements for Database Systems
 
-Traditional scientific inquiry is deductive: an expert observes a phenomenon, poses a question, formulates a hypothesis, and gathers specific data to validate it. Modern big data enables an inductive, bottom-up exploratory approach where machine learning detects correlations, patterns, and anomalies across raw data without a prior hypothesis. This shift is essential in complex domains like genomics and DNA sequencing, where datasets are terabytes of bits and humans cannot form upfront hypotheses.
+**Reference:** SMBUD-01-bigdata.pdf p.9
 
-## Evolution of Business Intelligence: Periodic Ex-Post Reports to Dynamic Interactive Dashboards
+You can add as many extra Vs as you like (5V, 6V…), but the four above are the key ones. These features of the data are also **mandatory requirements** for modern data systems. This is why relational databases are no longer enough: they don't comply with most of these aspects (to be developed in later lectures).
 
-**Reference:** SMBUD-01-bigdata.pdf, slides 29-31
+## Why Now: Falling Costs Changed People's Behaviour
 
-Traditional corporate decision-making relies on batch-processed data warehouses yielding ex-post, delayed reports (e.g., monthly sales reports, quarterly and annual financial reviews). Modern big data pipelines feed interactive real-time dashboards where managers can zoom, slice, filter, and pivot up-to-the-minute data independently on demand, avoiding the business obsolescence of operating on outdated reports.
+**Reference:** SMBUD-01-bigdata.pdf p.12–16
 
-## Netflix Case Study: DVD Logistics Forecasting vs. Micro-Clustering Computational Economics
+- The storage cost chart is on a **log scale**: from about $600/GB to a fraction of a cent. At $600/GB people would take fewer photos of their food, make fewer copies of the same file, and not save a 215 MB PowerPoint. Cheaper storage changes behaviour, and that creates the data.
+- Same for devices (a phone with today's iPhone features would have cost a few million dollars 20 years ago) and bandwidth (a fibre subscription costs about 20 € today; in 1999 it cost about $1,200, and only in a few places).
+- This feeds the virtuous cycle on the slide, which over about 30 years produced exponential data growth. The professor's rough figures: about 10 ZB/year around ten years ago with ~50% year-over-year growth, and today on the order of a few hundred ZB, still growing at about the same rate (approximate spoken figures).
 
-**Reference:** SMBUD-01-bigdata.pdf, slides 46-50
+## When Will Data Growth Stop? Saturation, Not Storage, Is the Real Limit
 
-In its DVD rental era, Netflix operated on 4 sparse data points (Customer ID, Movie ID, Rating, Date) primarily to solve physical logistics (predicting regional DVD stock and overnight shipping demands across the US to beat Blockbuster's local convenience). In the streaming era, fine-grained telemetry (pauses, clicks, preview scrolls) captures millions of behavioral points. Rather than computing 400 million individual personalization models, Netflix clusters users into roughly 2,000 archetypes and clusters content into tens of thousands of alt-genres, mapping cluster-to-cluster to drastically reduce computational complexity while achieving near-perfect personalization.
+**Reference:** None (not in slides)
 
-## Netflix Case Study: Upstream Content Bidding and Algorithmic Thumbnail A/B Testing
+- Running out of material to store data is centuries away. The earlier and more relevant question is when the **market saturates**: can we keep producing ~50% more data every year forever? This is like a country's GDP, which must keep growing. Generative AI boosts generation even more.
+- Empirically every phenomenon eventually reaches a **plateau**. If data growth plateaus, content production and **technology evolution** stagnate too. Technology investment (e.g. faster processors) is paid for by the returns from growing data and consumption, so companies would stop investing.
+- The estimate is still about 20–30 years of exponential growth, with no decrease in sight for the next 15–20 years.
 
-**Reference:** SMBUD-01-bigdata.pdf, slides 51-55
+## From Linear to Exponential Growth: the Analysis Gap
 
-Netflix leverages viewer analytics across two upstream and presentation dimensions: (1) Strategic acquisitions: Netflix outbid major cable networks with a $25 million commitment for 'House of Cards' because correlation data showed their audience strongly favoured David Fincher's directing combined with Kevin Spacey's acting; (2) Algorithmic presentation: Every visual element of movie thumbnails (colors, fonts, faces) is dynamically tested via real-time A/B testing on live users (e.g., showing a romantic Good Will Hunting thumbnail to romance fans and Robin Williams to comedy fans). Brambilla warns this optimization carries an ethical dark side, as continuous personalized nudging can artificially manipulate long-term human preferences in media and politics.
+**Reference:** SMBUD-01-bigdata.pdf p.39
+
+Until about 2000, data in traditional enterprise systems grew roughly **linearly**. Around 2000, with the growth and success of the web, it became **exponential**. Tools built for traditional data cannot analyse it at the same scale, so the gap widens. More data does not mean more value: without enough analysis you cannot take decisions and execute improvements, and you lose opportunities. The answer has two sides: evolve the **technology** (market) and the **people** (way of working).
+
+## The Three Market Pillars and Hidden Value
+
+**Reference:** SMBUD-01-bigdata.pdf p.32–33
+
+- **Infrastructure:** everything from hardware up to software for data acquisition, storage, transfer and processing (e.g. Oracle, SAP, Google Cloud, MongoDB, Azure). **Analytics:** turns stored raw data into value (data science, ML/AI, visualisation, search engines). **Applications:** internal or customer-facing apps (web, mobile), which are how value reaches users. **Data sources:** today data can also be bought from data vendors and integrated.
+- Users only see the application (e.g. scrolling Instagram). Most of the value sits in the infrastructure (thousands of distributed, replicated servers) and the analytics (ML/AI models optimising the experience). Media also talk about apps (ChatGPT), not about data centres or the GPT model.
+- **Example:** Musk's purchase of Twitter (about $44B, "I think") got huge media coverage. A larger acquisition at about the same time (about $48B, the professor was unsure) of VMware went almost unnoticed. VMware does virtualisation, cloud and cluster infrastructure, without which Instagram, Facebook or Twitter could not run. This shows the gap between technical value and perceived value.
+
+## Full-Stack Vendors: Integration vs. Vendor Lock-in
+
+**Reference:** SMBUD-01-bigdata.pdf p.32–33 ("cross-infrastructure" / "full data stack providers")
+
+- Big vendors (Amazon, Google, Microsoft, IBM, SAP…) expand from their original business (e.g. Oracle from databases) to cover the whole stack. Their customers are mostly companies, not end users.
+- **Advantage:** everything is integrated. On Azure you find databases, file systems, ML models, analytics, visualisation and app development environments that ideally work together, so developers don't have to integrate products from different vendors. This is their main marketing message.
+- **Disadvantages:** everything is standardised, so there is no custom development and you must configure it yourself. The main problem is portability, i.e. **vendor lock-in**: once database, cloud and AI models all come from one vendor, moving away is a "nightmare" and so expensive that if they raise prices you are effectively stuck (quasi-monopolistic).
+
+## Open Source: Not Lower Quality, but Not Free
+
+**Reference:** SMBUD-01-bigdata.pdf p.32–33 ("open source platforms")
+
+- Open source is **not lower quality**. In the big data market most commercial tools are built on open-source technology, which the commercial vendors themselves develop.
+- **Open ≠ free.** The source code is free, but management, daily operations, infrastructure and the people to run it are not. You also need a strong technical team. Commercial "fully managed" deployments instead come with guaranteed operation, customer service and automatic updates.
+- Practically all NoSQL databases (MongoDB, Redis, Neo4j) come both as an open-source version and as a commercial/cloud service sold by the same company.
+
+## Big Data Projects Fail Mostly Because of People
+
+**Reference:** None (not in slides)
+
+Most big data and data-science projects that fail do so not for technical reasons but because of **people's attitude**. Organisations say they want innovation, but people who have worked one way for years resist change. Big data therefore requires changing how people perceive and use data. The following paradigm shifts are about mindset, not technology.
+
+## Sampling Was Forced, Not Chosen: Barilla and Auditel
+
+**Reference:** SMBUD-01-bigdata.pdf p.20–22
+
+- Statistical sampling was not a "nice to have". It was forced because the whole population (people, services, products…) could not be processed. The limit was also on **collection**, not only analysis: today the whole stack for collecting, storing and transferring data exists.
+- **Barilla example:** 50 years ago, to learn what customers thought of a new pasta, you sent people with paper questionnaires into supermarkets ("did you like the colour of the box?") and got 50–100 answers. Today you use web and social-media analytics and ad monitoring (how many watch, click, for how long). Someone used to paper surveys finds this change hard.
+- **Auditel example (analog TV):** of about 60 million Italians, about 5,000 families were paid to host a device that recorded remote-control channel changes. "15 million watched Sanremo" was extrapolated from them, so everything depended on the sample being statistically representative. With streaming (Netflix) everyone is monitored second by second.
+- The Union Pacific slide was described as full-scale monitoring of US railway tracks (the professor said "through drones"; the slide photo shows a track-mounted device).
+
+## Data-Driven Exploration: Insights Can Seed Hypotheses
+
+**Reference:** SMBUD-01-bigdata.pdf p.23–25
+
+- Traditional: observe a phenomenon, formulate a hypothesis, run an experiment, then accept or reject it based on the data (e.g. "we sell less", form a hypothesis, try to fix it).
+- Data-driven (bottom-up): explore the data for correlations, connections and probabilities. The result is an **insight, not necessarily an answer**, but it can be used to *formulate* a hypothesis. This is most useful when you have no idea what the solution might be, or when the problem or data is so complex that a hypothesis is impossible to formulate.
+- **Example:** genomics. One DNA sequencing run produces terabytes of data, and you cannot write hypotheses from terabytes of bits. You first explore with statistics and correlation.
+
+## From Periodic Reports to Real-Time Dashboards
+
+**Reference:** SMBUD-01-bigdata.pdf p.29–31
+
+Traditionally, data goes into a database or data warehouse, and analysis is **periodic and delayed**: historical reports (monthly sales, yearly financials, quarterly…), typically PDF files. Today data up to last night is available, so managers analyse it almost in real time. With current market dynamics a six-month-old analysis is "like going back to prehistoric times", basically useless. The shift is from reports to **dashboards**: interactive, dynamic (usually web) applications where the manager can explore, zoom in and out, and change perspective at any time.
+
+## Big Data Without Value Creation Is Wasted Money
+
+**Reference:** SMBUD-01-bigdata.pdf p.38
+
+Companies push hard to "have" big data and AI and are happy once they can say so. This risks a bad disillusionment, because these things cost a lot: owning an infrastructure or an AI team produces no value by itself. Collecting and analysing must end in value for someone (company, customers, shareholders), otherwise it is wasted money. If value is created, the cycle repeats with continuously better performance. Value can be of any kind (sales, better processes, happier people), but there must be a **quantitative** improvement.
+
+## Netflix's DVD Era: Small Data for Logistics
+
+**Reference:** SMBUD-01-bigdata.pdf p.43–47
+
+- Netflix (about 400 million customers today, per the professor; the slide's 50 million is old) has its value in its data, and this was true from the beginning.
+- About 20 years ago it shipped DVDs by mail. Customers picked a movie on a basic website and got it by the next evening, anywhere in the US (New York to Alaska), otherwise they would go to Blockbuster or rental shops. Its advantage over shops was **catalogue variety**, like Amazon vs. a bookstore.
+- The four data points (customer, movie, rating, date) were used to **predict demand**. One-day shipping was hugely expensive and DVDs are physical, so they had to decide which movies to stock, how many copies to print, where to place them and how to ship in time.
+- With streaming, every click, stop, restart, preview, scroll and catalogue view is recorded, giving millions of data points per customer.
+
+## Netflix Personalisation via Clustering, and Why Cluster Instead of Per-User
+
+**Reference:** SMBUD-01-bigdata.pdf p.49–50
+
+- Each customer is a point in a space describing their behaviour. Customers are clustered with ML, movies are clustered too, and user clusters are associated with movie clusters ("these users like these movies"). This produces thousands of very specific categories (e.g. "TV programs featuring a strong female lead"), each shown only to the interested users.
+- **Student question — why cluster users instead of personalising per user?** People with similar preferences are similar enough that grouping them causes only a small error. This is *not* sampling. The gain is **computational efficiency**: about 2,000 profiles instead of 400 million cuts the computation by several orders of magnitude.
+
+## Netflix Strategy and Interface: Continuous Experiments on Customers
+
+**Reference:** SMBUD-01-bigdata.pdf p.51–55
+
+- **Strategy:** data on which actors, directors and kinds of movies people liked drove what to produce or buy. The professor said that when entering the European market Netflix bought the rights to House of Cards for an investment on the order of $25 million (figures as stated in class).
+- **Interface:** every pixel (colours, figures, labels, even fonts) is decided from data. Customers are "guinea pigs" in a continuous experiment: for the same series you see different previews on different days, and they measure how you react (whether and when you click, how long you stay). A student called this A/B testing and the professor agreed. The results decide which preview version to show for future movies. All big players do this.
+
+## Ethical Concern: Data-Driven Personalisation Can Shape Taste
+
+**Reference:** None (not in slides)
+
+This practice is ethically debatable. According to the professor, long-term studies show it can **change people's tastes** and steer them toward certain movies. Applied to news or political advertising, it becomes "a little bit creepy". He stressed that Netflix is not singled out as "the bad guy": basically all big players act this way.
+
+## "Data Companies": Value in Data, Not Assets
+
+**Reference:** SMBUD-01-bigdata.pdf p.56
+
+Uber is the biggest car-rental company in the world and owns no cars. Airbnb is the same for houses. Their value is in the data and the optimisation built on it, which is why they are called data companies rather than car or housing companies.

@@ -4,7 +4,7 @@ This file is for **Claude** (the assistant working in this repository). It expla
 lecture-note task **manually**: read the transcripts and course materials yourself and write the
 notes yourself.
 
-> Not to be confused with `instruction.md`, which documents Stage 1 transcription (`transcribe.py`).
+> Not to be confused with `instruction.md` (repo root), which documents Stage 1 transcription (`transcribe.py`).
 
 ---
 
@@ -23,7 +23,11 @@ notes yourself.
    the notes (see §7).
 5. **Recall first, then filter.** Missing a useful oral insight is worse than keeping a partly
    redundant one. But a note that just restates a slide adds nothing, so leave it out.
-6. Ask the user only when blocked (e.g., unknown material mapping, ambiguous lecture identity).
+6. **Materials = the professors' slides and notes only.** Never use a textbook (e.g.
+   `Multiagent Systems.pdf`), external papers, or past exams as materials, even if the schedule
+   points to them. If a lecture has no slides yet, do not substitute the book: leave the lecture
+   out and tell the user.
+7. Ask the user only when blocked (e.g., unknown material mapping, ambiguous lecture identity).
    Otherwise proceed.
 
 ---
@@ -45,7 +49,7 @@ You are not a summarizer, not a transcriber, and not a textbook writer.
 
 | Thing | Location |
 |---|---|
-| Course configs (lecture ↔ transcript ↔ materials mapping) | `ann2dl.yaml`, `data-mining.yaml`, `smbud.yaml`, `software-engineering-2.yaml` (repo root) |
+| Course configs (lecture ↔ transcript ↔ materials mapping) | Inside each course folder: `ANN2DL/ann2dl.yaml`, `Data Mining/data-mining.yaml`, `SMBUD/smbud.yaml`, `SOFTW2/software-engineering-2.yaml`, `Multi agents/multi-agents.yaml`. Relative paths in a YAML (transcripts, `course: .`) are relative to that course folder. |
 | Transcripts | `<Course>/transcript/<asr-model>/<recording>.txt` (prefer `parakeet-tdt-0.6b-v3`; other model folders, if present, are alternate versions of the **same** lecture) |
 | Course materials (slides, PDFs, notebooks) | Outside the repo: `E:\amirhossein\Polimi\POLIMI\<Course>\...` (absolute paths are in the YAML) |
 | Output notes | `<Course>/notes/<lecture-id>_extra_notes.md` |
@@ -55,9 +59,10 @@ You are not a summarizer, not a transcriber, and not a textbook writer.
 | Stage prompts used by the code | `src/prompts.py` (same method, condensed) |
 
 Course folders in this repo: `ANN2DL`, `Data Mining`, `SMBUD`, `SOFTW2`, `Multi agents`, `TCS`.
-`Multi agents` and `TCS` have **no YAML yet**. For those, find matching materials under
-`E:\amirhossein\Polimi\POLIMI\` (`Multi agents`, `Theoretical computer science`) and confirm the
-mapping with the user before writing notes, unless it is obvious from dates/file names.
+`TCS` has **no YAML yet**. For it, find matching materials under
+`E:\amirhossein\Polimi\POLIMI\Theoretical computer science` and confirm the mapping with the user
+before writing notes, unless it is obvious from dates/file names. For `Multi agents`, the course
+schedule is `Multi agents/Multiagent Systems 2026-2027 Schedule.pdf`.
 
 Transcripts are plain text, roughly 50–70k characters, about 20 long lines each, and have **no
 timestamps**. They can be read with the Read tool in one go or in a few parts.
@@ -274,6 +279,10 @@ Report under `> **Material limitations:**` in the lecture file, and append
 - no materials are mapped (then every note is effectively NEW; say so).
 
 Never claim something is absent from materials you could not inspect.
+
+Do **not** put coverage remarks in the limitations line (which slides the lecture reached, slide
+numbering quirks, transcript gaps). If those are worth stating, use a separate line
+`> **Coverage notes:** ...` instead. It does not trigger the index flag.
 
 ---
 

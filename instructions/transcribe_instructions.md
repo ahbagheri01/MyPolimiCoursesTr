@@ -6,13 +6,13 @@
 
 The supported models are:
 
-| CLI name | Model ID | Transcript folder |
-|---|---|---|
-| `qwen3` | `Qwen/Qwen3-ASR-1.7B` | `Qwen3-ASR-1.7B` |
-| `canary` | `nvidia/canary-qwen-2.5b` | `canary-qwen-2.5b` |
-| `parakeet` | `nvidia/parakeet-tdt-0.6b-v3` | `parakeet-tdt-0.6b-v3` |
-| `parakeet1.1b` | `nvidia/parakeet-tdt-1.1b` | `parakeet-tdt-1.1b` |
-| `whisper` | `openai/whisper-large-v3` | `whisper-large-v3` |
+| CLI name       | Model ID                      | Transcript folder      |
+| -------------- | ----------------------------- | ---------------------- |
+| `qwen3`        | `Qwen/Qwen3-ASR-1.7B`         | `Qwen3-ASR-1.7B`       |
+| `canary`       | `nvidia/canary-qwen-2.5b`     | `canary-qwen-2.5b`     |
+| `parakeet`     | `nvidia/parakeet-tdt-0.6b-v3` | `parakeet-tdt-0.6b-v3` |
+| `parakeet1.1b` | `nvidia/parakeet-tdt-1.1b`    | `parakeet-tdt-1.1b`    |
+| `whisper`      | `openai/whisper-large-v3`     | `whisper-large-v3`     |
 
 Models are loaded and unloaded one at a time. This is important because the GPU cannot hold several of these models simultaneously.
 
