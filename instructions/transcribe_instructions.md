@@ -40,7 +40,7 @@ The local Python 3.12 environment is `.venv`. Activate it in PowerShell and inst
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements-gpu.txt
+python -m pip install -r requirements.txt
 ```
 
 Model weights are not stored in this repository. The relevant library downloads them from Hugging Face the first time each model is used.

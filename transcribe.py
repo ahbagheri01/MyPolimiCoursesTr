@@ -45,7 +45,7 @@ def _require_import(package: str, install_name: str | None = None) -> Any:
     except ImportError as exc:
         dependency = install_name or package
         raise RuntimeError(
-            f"Missing dependency '{dependency}'. Install requirements-gpu.txt in .venv."
+            f"Missing dependency '{dependency}'. Install requirements.txt in .venv."
         ) from exc
 
 
@@ -289,7 +289,7 @@ def choose_device(allow_cpu: bool) -> str:
         print("WARNING: CUDA is unavailable; using CPU because --allow-cpu was supplied.")
         return "cpu"
     raise RuntimeError(
-        "CUDA is not available to PyTorch. Install the CUDA build from requirements-gpu.txt "
+        "CUDA is not available to PyTorch. Install the CUDA build from requirements.txt "
         "and verify the NVIDIA driver, or explicitly use --allow-cpu."
     )
 

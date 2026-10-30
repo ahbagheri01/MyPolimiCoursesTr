@@ -4,7 +4,7 @@ This file is for **Claude** (the assistant working in this repository). It expla
 lecture-note task **manually**: read the transcripts and course materials yourself and write the
 notes yourself.
 
-> Not to be confused with `instruction.md` (repo root), which documents Stage 1 transcription (`transcribe.py`).
+> Not to be confused with `transcribe_instructions.md` (same folder), which documents Stage 1 transcription (`transcribe.py`).
 
 ---
 

@@ -14,7 +14,7 @@ class LLMClient:
         try:
             from openai import OpenAI
         except ImportError as exc:
-            raise RuntimeError("Install agent dependencies with: pip install -r requirements-agent.txt") from exc
+            raise RuntimeError("Install agent dependencies with: pip install -r requirements.txt") from exc
         api_key_env = settings.get("api_key_env", "OPENROUTERAPIKEY")
         api_key = os.getenv(api_key_env)
         if not api_key:

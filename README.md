@@ -39,10 +39,9 @@ Nothing here needs to be read in code to be used: everything is driven by `trans
 | `src/models.py` | Small dataclasses passed between stages. |
 | `tests/test_lecture_agent.py` | Unit tests for config loading, course inference and the workflow (uses a fake LLM, no network). |
 | `<Course>/<course>.yaml` (e.g. `SMBUD/smbud.yaml`) | Per-course Stage 2 configs, one inside each course folder: lecture list, transcript paths, material paths, status flags. |
-| `instruction.md` | Detailed reference for Stage 1 (`transcribe.py`). |
-| `intrsutaanlysy.md` | The original specification of what a good note is (the "professor-only insights" brief). Historical; may be absent in your checkout. |
-| `requirements-gpu.txt` | Dependencies for Stage 1 (CUDA PyTorch, NeMo, Qwen-ASR, Whisper...). |
-| `requirements-agent.txt` | Lightweight dependencies for Stage 2. |
+| `instructions/transcribe_instructions.md` | Detailed reference for Stage 1 (`transcribe.py`). |
+| `instructions/instructions.md` | How Claude writes the lecture notes by hand (the procedure currently used instead of running Stage 2). |
+| `requirements.txt` | All dependencies: Stage 1 (CUDA PyTorch, NeMo, Qwen-ASR, Whisper...) and Stage 2 (OpenAI client, PyMuPDF, PyYAML...). |
 | `.env` | Holds `OPENROUTERAPIKEY` (git-ignored). |
 | `<Course>/` | One folder per course, see below. |
 
@@ -81,8 +80,7 @@ Requirements: Windows with an NVIDIA GPU (developed on an 8 GB RTX 3070), Python
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-python -m pip install -r requirements-gpu.txt      # Stage 1 (GPU transcription)
-python -m pip install -r requirements-agent.txt    # Stage 2 (note extraction)
+python -m pip install -r requirements.txt          # Stage 1 (GPU transcription) + Stage 2 (note extraction)
 ```
 
 Always use the project's `.venv`. Create a `.env` file in the repository root containing:
@@ -124,7 +122,7 @@ Behaviour worth knowing:
 - Transcripts are plain text with **no timestamps** (so any timestamp in a note is the LLM's estimate from context; treat it as a pointer, not a measurement).
 - `run_parakeet.ps1` runs Parakeet over all course folders and removes `.asr-cache/` afterwards.
 
-More detail in [instruction.md](instruction.md).
+More detail in [instructions/transcribe_instructions.md](instructions/transcribe_instructions.md).
 
 ---
 
