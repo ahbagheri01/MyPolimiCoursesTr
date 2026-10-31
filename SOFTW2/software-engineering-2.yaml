@@ -61,10 +61,18 @@ lectures:
     status: COMPLETE
     course: .
     transcripts:
-      - "transcript/parakeet-tdt-0.6b-v3/SE2 20251002.txt"
+      - "transcript/parakeet-tdt-0.6b-v3/Software Engineering 2 20260930.txt"
     materials:
       - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\02e.UML4RE.pdf'
       - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\03a.AlloyPart1-2.pdf'
+
+  - id: SE2-20261001-ExercisesOnRE
+    status: COMPLETE
+    course: .
+    transcripts:
+      - "transcript/parakeet-tdt-0.6b-v3/SE2 - 1 1_10_2026.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\02f.ExercisesRE.pdf'
 
   - id: SE2-20261007-AlloyPart2
     status: COMPLETE

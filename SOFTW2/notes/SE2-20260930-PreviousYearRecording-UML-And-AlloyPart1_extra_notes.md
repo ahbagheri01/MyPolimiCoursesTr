@@ -1,6 +1,6 @@
 # SE2-20260930-PreviousYearRecording-UML-And-AlloyPart1 — Additional Professor Notes
 
-**Transcripts:** SE2 20251002.txt
+**Transcripts:** Software Engineering 2 20260930.txt
 **Materials:** E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\02e.UML4RE.pdf, E:\amirhossein\Polimi\POLIMI\SOFTW2\Slides-20261016\03a.AlloyPart1-2.pdf
 
 > **Material limitations:** The 30/09/2026 lecture recording failed. The course links the previous year's recording instead (02/10/2025), and these notes are based on that transcript. Anything about dates, the book edition, or "next week" refers to the 2025 edition and may not hold for 2026. Deck 03a is shared with later Alloy lectures: this lecture only reached slide 17 (the empty `show` predicate run in the Analyzer), so the notes were compared against the whole deck but only cover that part. 03a has 77 PDF pages, but its printed slide numbers run to 78 (there is no slide 61). References below use the printed slide numbers. Some parts of the transcript are garbled or partly cut (the fork/join part of the activity diagram, part of the "UML for RE" summary). Those are marked where relevant.
