@@ -11,3 +11,7 @@
 - [SMBUD06-20261013-GraphDB-Wrapup-DocumentDB](SMBUD06-20261013-GraphDB-Wrapup-DocumentDB_extra_notes.md) (33 notes)
 - [SMBUD-Ex-20261015-Neo4j-Practice-Raphtory](SMBUD-Ex-20261015-Neo4j-Practice-Raphtory_extra_notes.md) (20 notes)
 - [SMBUD-Ex-20261015-Raphtory-Tocchetti](SMBUD-Ex-20261015-Raphtory-Tocchetti_extra_notes.md) (13 notes)
+- [SMBUD08-20261022-DocumentDB-MongoDB](SMBUD08-20261022-DocumentDB-MongoDB_extra_notes.md) (27 notes)
+- [SMBUD-Ex-20261029-MongoDB-Introduction](SMBUD-Ex-20261029-MongoDB-Introduction_extra_notes.md) (25 notes)
+- [SMBUD-Ex-20261105-MongoDB-Practice](SMBUD-Ex-20261105-MongoDB-Practice_extra_notes.md) (13 notes)
+- [SMBUD-Ex-20261112-Cassandra-Redis-Tocchetti](SMBUD-Ex-20261112-Cassandra-Redis-Tocchetti_extra_notes.md) (24 notes)

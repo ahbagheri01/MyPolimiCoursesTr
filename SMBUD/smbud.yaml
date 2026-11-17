@@ -130,3 +130,45 @@ lectures:
       - "transcript/parakeet-tdt-0.6b-v3/Andrea Tocchetti's Personal Room-20261015 1602-1.txt"
     materials:
       - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E02 - Neo4j\E02 Extra - Introduction to Raphtory.pdf'
+
+  # 22/10 - Document DBs and MongoDB (data model, CRUD queries, aggregation, sharding) (Brambilla)
+  - id: SMBUD08-20261022-DocumentDB-MongoDB
+    status: COMPLETE
+    course: .
+    transcripts:
+      - "transcript/parakeet-tdt-0.6b-v3/SMBUD08-Marco Brambilla PoliMi-20261022 1607-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-07-document-db.pdf'
+
+  # 29/10 - Exercise session (Ettori): MongoDB introduction (queries, operators, aggregation pipeline)
+  - id: SMBUD-Ex-20261029-MongoDB-Introduction
+    status: COMPLETE
+    course: .
+    transcripts:
+      - "transcript/parakeet-tdt-0.6b-v3/MongoDB_introduction_Ettori_29-10-2026.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E03 - MongoDB\E03 - MongoDB.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E03 - MongoDB\E03 - MongoDB Atlas Setup Guide.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-07-document-db.pdf'
+
+  # 05/11 - Exercise session (Ettori): MongoDB hands-on on the Airbnb dataset (first mid-term test on Neo4j held this day)
+  - id: SMBUD-Ex-20261105-MongoDB-Practice
+    status: COMPLETE
+    course: .
+    transcripts:
+      - "transcript/parakeet-tdt-0.6b-v3/MongoDB_practice_Ettori_05-11-2026.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E03 - MongoDB\E03 - MongoDB Exercises on the Airbnb Dataset.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E03 - MongoDB\E03 - MongoDB.pdf'
+
+  # 12/11 - Exercise session (Tocchetti): Cassandra (CQL, keys, indexes) and Redis
+  - id: SMBUD-Ex-20261112-Cassandra-Redis-Tocchetti
+    status: COMPLETE
+    course: .
+    transcripts:
+      - "transcript/parakeet-tdt-0.6b-v3/Andrea Tocchetti's Personal Room-20261112 1650-1.txt"
+    materials:
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E05 - Cassandra  Redis\E05 - Cassandra - Redis.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\Exercise Session - Group [A-N]-20261016\E05 - Cassandra  Redis\E05 Extra - Cassandra  Redis Setup.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-08-keyvalue-db.pdf'
+      - 'E:\amirhossein\Polimi\POLIMI\SMBUD\SMBUD-09-columnar-db.pdf'
